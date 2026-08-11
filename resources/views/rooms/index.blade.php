@@ -16,6 +16,9 @@
                 </p>
             @endif
         </div>
+        @if ($property)
+            <a class="button button-primary" href="{{ route('property-structure.index') }}">Quản lý tầng & phòng</a>
+        @endif
     </header>
 
     @if (! $property)
@@ -31,16 +34,22 @@
 
         <div class="floor-list">
             @forelse ($property->floors as $floor)
-                <section class="card floor-card" aria-labelledby="floor-{{ $floor->id }}">
-                    <header class="floor-header">
+                <details class="card floor-card floor-accordion">
+                    <summary class="floor-header" aria-controls="floor-rooms-{{ $floor->id }}">
                         <div>
                             <p class="eyebrow">Tầng {{ $floor->code }}</p>
-                            <h2 id="floor-{{ $floor->id }}">{{ $floor->name }}</h2>
+                            <h2>{{ $floor->name }}</h2>
                         </div>
-                        <span class="count-pill">{{ $floor->rooms->count() }} phòng</span>
-                    </header>
+                        <span class="floor-summary-actions">
+                            <span class="count-pill">{{ $floor->rooms->count() }} phòng</span>
+                            <span class="floor-toggle" aria-hidden="true">
+                                <span class="floor-toggle-label">Xem phòng</span>
+                                <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                            </span>
+                        </span>
+                    </summary>
 
-                    <div class="room-list">
+                    <div class="room-list" id="floor-rooms-{{ $floor->id }}">
                         @forelse ($floor->rooms as $room)
                             <article class="room-row @if(! $room->is_active) is-inactive @endif">
                                 <div class="room-identity">
@@ -61,7 +70,7 @@
                             <p class="empty-inline">Tầng này chưa có phòng.</p>
                         @endforelse
                     </div>
-                </section>
+                </details>
             @empty
                 <div class="card empty-state">Chưa có tầng nào.</div>
             @endforelse

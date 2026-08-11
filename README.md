@@ -129,8 +129,13 @@ Trang hiện có:
 - `/billing-periods`: chọn/tạo kỳ tháng và xem tiến độ từng tầng.
 - `/billing-periods/{period}/floors/{floor}/rooms/{room}/reading`: ghi điện nước, nhảy phòng, bỏ qua có lý do và OK & Tiếp.
 - `/billing-periods/{period}/invoices`: xem các hóa đơn nháp đã tự tính từ chỉ số và cấu hình giá.
+- `/billing-periods/{period}/invoices/{invoice}`: xem hóa đơn rõ ràng và mở bản in A5.
+- `/billing-periods/{period}/invoices/print`: xem trước/in hàng loạt 3 phiếu trên mỗi tờ A4.
 - `/rooms`: danh sách tầng/phòng theo `sort_order`.
 - `/rooms/{room}/settings`: sửa trạng thái, thứ tự đi, giá, phí và cờ đồng hồ.
+- `/property-structure`: thêm/sửa tầng, thêm/sửa/chuyển phòng, xóa phòng chưa có lịch sử và ngừng sử dụng phòng đã có lịch sử.
+
+Demo seeder chỉ tạo 4 tầng và 45 phòng khi property chưa có tầng nào. Sau khi cấu trúc được chỉnh trên giao diện, những lần khởi động Docker hoặc chạy seeder tiếp theo sẽ giữ nguyên dữ liệu đó.
 
 ## Truy cập trong mạng LAN
 

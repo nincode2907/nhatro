@@ -13,9 +13,16 @@
             <h1>{{ $period->label() }}</h1>
             <p class="muted property-summary">Số tiền bên dưới lấy trực tiếp từ snapshot hóa đơn.</p>
         </div>
-        <span class="status-badge period-status-{{ strtolower($period->status->value) }}">
-            {{ $period->status->label() }}
-        </span>
+        <div class="invoice-index-actions">
+            <span class="status-badge period-status-{{ strtolower($period->status->value) }}">
+                {{ $period->status->label() }}
+            </span>
+            @if ($invoices->isNotEmpty())
+                <a class="button button-primary" href="{{ route('invoices.print-batch', $period) }}">
+                    In 3 phiếu / A4
+                </a>
+            @endif
+        </div>
     </header>
 
     <section class="invoice-list" aria-label="Danh sách hóa đơn">
@@ -36,10 +43,16 @@
                     <dd>{{ number_format($invoice->total, 0, ',', '.') }} đ</dd>
                 </dl>
 
-                <a class="button button-secondary button-block"
-                   href="{{ route('invoices.show', [$period, $invoice]) }}">
-                    Xem snapshot
-                </a>
+                <div class="invoice-card-actions">
+                    <a class="button button-secondary"
+                       href="{{ route('invoices.show', [$period, $invoice]) }}">
+                        Xem hóa đơn
+                    </a>
+                    <a class="button button-primary"
+                       href="{{ route('invoices.print-single', [$period, $invoice]) }}">
+                        In A5
+                    </a>
+                </div>
             </article>
         @empty
             <div class="card empty-state">

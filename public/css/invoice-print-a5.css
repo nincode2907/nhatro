@@ -1,0 +1,24 @@
+@page {
+    size: A5 portrait;
+    margin: 7mm;
+}
+
+.print-preview--single {
+    display: grid;
+    place-items: start center;
+}
+
+.invoice-paper--single {
+    width: min(100%, 134mm);
+    min-height: 196mm;
+    padding: 6mm;
+}
+
+@media print {
+    .invoice-paper--single {
+        width: 100%;
+        min-height: 196mm;
+        padding: 0;
+        border: 0;
+    }
+}

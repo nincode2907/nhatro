@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name'))</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @stack('styles')
 </head>
 <body>
     <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
@@ -21,7 +22,7 @@
                     <a class="nav-link @if(request()->routeIs('billing-periods.*', 'meter-readings.*', 'invoices.*')) is-active @endif" href="{{ route('billing-periods.index') }}">
                         Ghi số
                     </a>
-                    <a class="nav-link @if(request()->routeIs('rooms.*')) is-active @endif" href="{{ route('rooms.index') }}">
+                    <a class="nav-link @if(request()->routeIs('rooms.*', 'property-structure.*')) is-active @endif" href="{{ route('rooms.index') }}">
                         Phòng
                     </a>
                     <span class="account-name">{{ auth()->user()->name }}</span>

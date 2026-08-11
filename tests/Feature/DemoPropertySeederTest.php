@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Floor;
 use App\Models\Property;
 use App\Models\Room;
 use App\Models\RoomSetting;
@@ -58,5 +59,39 @@ class DemoPropertySeederTest extends TestCase
         $this->assertDatabaseCount('rooms', 45);
         $this->assertDatabaseCount('room_settings', 45);
         $this->assertSame(4_200_000, $room->settings()->value('rent_amount'));
+    }
+
+    public function test_demo_seeder_does_not_restore_old_demo_rooms_after_structure_is_edited(): void
+    {
+        config()->set('property.code', 'TEST-HOUSE');
+        config()->set('property.name', 'Nhà trọ kiểm thử');
+        $this->seed(DemoPropertySeeder::class);
+
+        $room = Room::query()->where('room_number', '101')->sole();
+        $room->update(['room_number' => '101A']);
+
+        $this->seed(DemoPropertySeeder::class);
+
+        $this->assertDatabaseCount('floors', 4);
+        $this->assertDatabaseCount('rooms', 45);
+        $this->assertDatabaseHas('rooms', ['id' => $room->id, 'room_number' => '101A']);
+        $this->assertDatabaseMissing('rooms', ['room_number' => '101']);
+    }
+
+    public function test_demo_seeder_keeps_a_custom_existing_structure_instead_of_injecting_demo_floors(): void
+    {
+        config()->set('property.code', 'TEST-HOUSE');
+        config()->set('property.name', 'Nhà trọ kiểm thử');
+        $property = Property::factory()->create(['code' => 'TEST-HOUSE']);
+        Floor::factory()->for($property)->create([
+            'code' => 'G',
+            'name' => 'Tầng trệt',
+        ]);
+
+        $this->seed(DemoPropertySeeder::class);
+
+        $this->assertDatabaseCount('floors', 1);
+        $this->assertDatabaseCount('rooms', 0);
+        $this->assertDatabaseHas('floors', ['property_id' => $property->id, 'code' => 'G']);
     }
 }

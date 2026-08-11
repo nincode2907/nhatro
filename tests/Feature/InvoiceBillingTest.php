@@ -209,7 +209,8 @@ class InvoiceBillingTest extends TestCase
             ->get(route('invoices.show', [$this->period, $invoice]))
             ->assertOk()
             ->assertSeeText('Phòng 101')
-            ->assertSeeText('14.000 → 14.217')
+            ->assertSeeText('Cũ 14.000')
+            ->assertSeeText('Mới 14.217')
             ->assertSeeText('694.400 đ')
             ->assertSeeText('4.187.400 đ');
     }

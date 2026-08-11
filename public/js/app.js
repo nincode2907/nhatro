@@ -43,6 +43,16 @@ periodSwitch?.addEventListener('change', () => {
     if (periodSwitch.value) window.location.assign(periodSwitch.value);
 });
 
+document.querySelectorAll('form[data-confirm-message]').forEach((form) => {
+    form.addEventListener('submit', (event) => {
+        if (!window.confirm(form.dataset.confirmMessage)) event.preventDefault();
+    });
+});
+
+document.querySelectorAll('[data-print-page]').forEach((button) => {
+    button.addEventListener('click', () => window.print());
+});
+
 const readingForm = document.querySelector('[data-meter-reading-form]');
 
 if (readingForm) {

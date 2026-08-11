@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BillingPeriodController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MeterReadingController;
+use App\Http\Controllers\PropertyStructureController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomSettingsController;
 use Illuminate\Support\Facades\Route;
@@ -23,8 +24,12 @@ Route::middleware('auth')->group(function (): void {
         ->name('billing-periods.show');
     Route::get('/billing-periods/{period}/invoices', [InvoiceController::class, 'index'])
         ->name('invoices.index');
+    Route::get('/billing-periods/{period}/invoices/print', [InvoiceController::class, 'printBatch'])
+        ->name('invoices.print-batch');
     Route::get('/billing-periods/{period}/invoices/{invoice}', [InvoiceController::class, 'show'])
         ->name('invoices.show');
+    Route::get('/billing-periods/{period}/invoices/{invoice}/print', [InvoiceController::class, 'printSingle'])
+        ->name('invoices.print-single');
     Route::get('/billing-periods/{period}/floors/{floor}/readings', [MeterReadingController::class, 'floor'])
         ->name('meter-readings.floor');
     Route::get('/billing-periods/{period}/floors/{floor}/rooms/{room}/reading', [MeterReadingController::class, 'show'])
@@ -34,6 +39,26 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/billing-periods/{period}/floors/{floor}/rooms/{room}/reading/skip', [MeterReadingController::class, 'skip'])
         ->name('meter-readings.skip');
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
+    Route::get('/property-structure', [PropertyStructureController::class, 'index'])
+        ->name('property-structure.index');
+    Route::get('/property-structure/floors/create', [PropertyStructureController::class, 'createFloor'])
+        ->name('property-structure.floors.create');
+    Route::post('/property-structure/floors', [PropertyStructureController::class, 'storeFloor'])
+        ->name('property-structure.floors.store');
+    Route::get('/property-structure/floors/{floor}/edit', [PropertyStructureController::class, 'editFloor'])
+        ->name('property-structure.floors.edit');
+    Route::put('/property-structure/floors/{floor}', [PropertyStructureController::class, 'updateFloor'])
+        ->name('property-structure.floors.update');
+    Route::get('/property-structure/floors/{floor}/rooms/create', [PropertyStructureController::class, 'createRoom'])
+        ->name('property-structure.rooms.create');
+    Route::post('/property-structure/floors/{floor}/rooms', [PropertyStructureController::class, 'storeRoom'])
+        ->name('property-structure.rooms.store');
+    Route::get('/property-structure/rooms/{room}/edit', [PropertyStructureController::class, 'editRoom'])
+        ->name('property-structure.rooms.edit');
+    Route::put('/property-structure/rooms/{room}', [PropertyStructureController::class, 'updateRoom'])
+        ->name('property-structure.rooms.update');
+    Route::delete('/property-structure/rooms/{room}', [PropertyStructureController::class, 'destroyRoom'])
+        ->name('property-structure.rooms.destroy');
     Route::get('/rooms/{room}/settings', [RoomSettingsController::class, 'edit'])
         ->name('rooms.settings.edit');
     Route::put('/rooms/{room}/settings', [RoomSettingsController::class, 'update'])

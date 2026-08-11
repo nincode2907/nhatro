@@ -62,6 +62,8 @@ class RoomManagementTest extends TestCase
             ->assertSee('Tầng 1')
             ->assertSeeInOrder(['Phòng 105', 'Phòng 101'])
             ->assertSee('Phòng trống')
+            ->assertSee('floor-accordion')
+            ->assertSeeText('Xem phòng')
             ->assertSee('chỉ là demo');
     }
 

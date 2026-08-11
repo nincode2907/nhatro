@@ -2,6 +2,10 @@
 
 @section('title', 'Hóa đơn phòng '.$invoice->room->room_number.' — '.config('app.name'))
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/invoice-print.css') }}">
+@endpush
+
 @section('content')
     <nav class="breadcrumbs" aria-label="Điều hướng">
         <a href="{{ route('invoices.index', $period) }}">← Hóa đơn {{ $period->label() }}</a>
@@ -9,44 +13,21 @@
 
     <header class="page-header invoice-detail-header">
         <div>
-            <p class="eyebrow">{{ $period->label() }} · {{ $invoice->room->floor->name }}</p>
+            <p class="eyebrow">Hóa đơn đã lưu</p>
             <h1>Phòng {{ $invoice->room->room_number }}</h1>
-            <p class="muted property-summary">Snapshot tạo lúc {{ $invoice->generated_at?->format('H:i d/m/Y') }}.</p>
+            <p class="muted property-summary">{{ $period->label() }} · {{ $invoice->room->floor->name }}</p>
         </div>
-        <span class="status-badge invoice-status-{{ strtolower($invoice->status->value) }}">
-            {{ $invoice->status->label() }}
-        </span>
+        <div class="invoice-screen-actions">
+            <span class="status-badge invoice-status-{{ strtolower($invoice->status->value) }}">
+                {{ $invoice->status->label() }}
+            </span>
+            <a class="button button-primary" href="{{ route('invoices.print-single', [$period, $invoice]) }}">
+                In khổ A5
+            </a>
+        </div>
     </header>
 
-    <section class="card invoice-snapshot" aria-labelledby="invoice-items-title">
-        <h2 id="invoice-items-title">Các khoản thu đã lưu</h2>
-
-        <div class="invoice-items">
-            @forelse ($invoice->items as $item)
-                <article class="invoice-item">
-                    <div class="invoice-item-copy">
-                        <strong>{{ $item->description }}</strong>
-                        @if ($item->metadata)
-                            <span>
-                                Chỉ số {{ number_format($item->metadata['previous'], 0, ',', '.') }}
-                                → {{ number_format($item->metadata['current'], 0, ',', '.') }}
-                            </span>
-                        @endif
-                        <span>
-                            {{ number_format($item->quantity, 0, ',', '.') }} {{ $item->unit }}
-                            × {{ number_format($item->unit_price, 0, ',', '.') }} đ
-                        </span>
-                    </div>
-                    <strong class="invoice-item-amount">{{ number_format($item->amount, 0, ',', '.') }} đ</strong>
-                </article>
-            @empty
-                <p class="muted">Phòng này không có khoản thu trong snapshot hiện tại.</p>
-            @endforelse
-        </div>
-
-        <dl class="invoice-grand-total">
-            <dt>Tổng cộng</dt>
-            <dd>{{ number_format($invoice->total, 0, ',', '.') }} đ</dd>
-        </dl>
-    </section>
+    <div class="invoice-screen-document">
+        @include('invoices.partials.document', ['document' => $document, 'variant' => 'single'])
+    </div>
 @endsection

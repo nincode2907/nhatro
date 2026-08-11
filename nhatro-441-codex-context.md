@@ -1638,29 +1638,6 @@ Hóa đơn nhìn rõ, dùng được trên màn hình và giấy.
 - Người thu.
 - Người thuê/signature area.
 
-## Codex prompt — Phase 4
-
-```text
-Read the project context.
-
-Implement PHASE 4 only: invoice UI and printable templates.
-
-Create:
-1. a readable single invoice,
-2. an A5/half-A4 print view,
-3. a compact batch layout targeting 3 invoices per A4 sheet.
-
-Prioritize readability for older users:
-- large room number,
-- large total amount,
-- clear old/new meter readings,
-- clear line items,
-- no unnecessary UI when printing.
-
-Do not add payment tracking or tenant portal.
-
-Run tests/check rendering and stop.
-```
 
 ---
 
@@ -1707,26 +1684,6 @@ UI = XLSX = PDF = DOCX
 ```
 
 phải cùng nguồn dữ liệu.
-
-## Codex prompt — Phase 5
-
-```text
-Read the context.
-
-Implement PHASE 5 only: XLSX, PDF, and DOCX exports.
-
-All export values must come from the invoice/domain data already calculated by the server. Do not duplicate billing formulas inside exporters.
-
-Excel should resemble the family's current monthly table and include old/new electricity and water readings, usage, unit prices, fees, totals, statuses, and notes.
-
-PDF must support both single and batch invoices.
-
-DOCX must be readable/editable in Word; pixel-perfect parity with PDF is not required.
-
-Use stable PHP packages compatible with the project's Laravel/PHP version.
-
-Add export tests and stop.
-```
 
 ---
 

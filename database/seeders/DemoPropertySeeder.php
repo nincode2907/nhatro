@@ -42,7 +42,7 @@ class DemoPropertySeeder extends Seeder
             throw new RuntimeException('PROPERTY_CODE and PROPERTY_NAME must be configured before seeding demo data.');
         }
 
-        DB::transaction(function () use ($code, $name): void {
+        $seeded = DB::transaction(function () use ($code, $name): bool {
             $property = Property::query()->firstOrCreate(
                 ['code' => $code],
                 [
@@ -51,6 +51,10 @@ class DemoPropertySeeder extends Seeder
                     'is_active' => true,
                 ],
             );
+
+            if ($property->floors()->exists()) {
+                return false;
+            }
 
             foreach (self::FLOOR_ROOM_COUNTS as $floorCode => $roomCount) {
                 $floor = Floor::query()->firstOrCreate(
@@ -83,8 +87,12 @@ class DemoPropertySeeder extends Seeder
                     $room->settings()->firstOrCreate([], self::DEFAULT_SETTINGS);
                 }
             }
+
+            return true;
         });
 
-        $this->command?->info('Demo property created: 4 floors and 45 rooms. Verify all room numbers and prices before real use.');
+        $this->command?->info($seeded
+            ? 'Demo property created: 4 floors and 45 rooms. Verify all room numbers and prices before real use.'
+            : 'Existing property structure kept unchanged; demo floors and rooms were not seeded.');
     }
 }
