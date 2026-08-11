@@ -1,0 +1,49 @@
+name: nhatro-441
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nhatro-441:local
+    init: true
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      APP_NAME: "${PROPERTY_NAME:-Nhà trọ 441}"
+      APP_ENV: local
+      APP_KEY: "${DOCKER_APP_KEY:-}"
+      APP_DEBUG: "false"
+      APP_URL: "${APP_URL:-http://127.0.0.1:8000}"
+      APP_LOCALE: vi
+      APP_FALLBACK_LOCALE: vi
+      APP_FAKER_LOCALE: vi_VN
+      APP_TIMEZONE: "${APP_TIMEZONE:-Asia/Ho_Chi_Minh}"
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: warning
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /data/database.sqlite
+      DB_FOREIGN_KEYS: "true"
+      DB_BUSY_TIMEOUT: "5000"
+      DB_JOURNAL_MODE: WAL
+      DB_SYNCHRONOUS: NORMAL
+      SESSION_DRIVER: database
+      SESSION_ENCRYPT: "true"
+      SESSION_SECURE_COOKIE: "false"
+      SESSION_SAME_SITE: lax
+      CACHE_STORE: database
+      QUEUE_CONNECTION: sync
+      ADMIN_NAME: "${ADMIN_NAME:-Quản trị viên}"
+      ADMIN_USERNAME: "${ADMIN_USERNAME:-admin}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.docker before starting Docker}"
+      PROPERTY_CODE: "${PROPERTY_CODE:-441}"
+      PROPERTY_NAME: "${PROPERTY_NAME:-Nhà trọ 441}"
+      PROPERTY_ADDRESS: "${PROPERTY_ADDRESS:-}"
+    volumes:
+      - app-data:/data
+      - app-storage:/var/www/html/storage
+
+volumes:
+  app-data:
+  app-storage:

@@ -1486,26 +1486,6 @@ status
 - Có thể thay đổi sort order.
 - Có thể mark VACANT/OCCUPIED.
 
-## Codex prompt — Phase 1
-
-```text
-Read nhatro-441-codex-context.md and nhatro-441-erd.md.
-
-Implement PHASE 1 only: Property, Floors, Rooms, and Room Settings.
-
-Keep the app scoped to Nhà trọ 441, but do not hardcode the string "441" throughout business logic.
-
-Create migrations, models, seeders, validation, mobile-friendly room/settings pages, and tests.
-
-Do not implement billing periods, readings, invoices, exports, QR, tenant management, or payments yet.
-
-After implementation:
-- run tests,
-- summarize changed files,
-- provide migration/seed commands,
-- state assumptions,
-- stop.
-```
 
 ---
 
