@@ -39,6 +39,11 @@
         </select>
     </div>
 
+    <a class="button button-secondary button-block period-invoice-link"
+       href="{{ route('invoices.index', $period) }}">
+        Hóa đơn tháng · {{ $invoiceCount }} bản
+    </a>
+
     <section class="floor-progress-list" aria-label="Tiến độ theo tầng">
         @forelse ($floorSummaries as $summary)
             @php

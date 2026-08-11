@@ -7,6 +7,7 @@ use App\Enums\MeterReadingStatus;
 use App\Models\BillingPeriod;
 use App\Models\Floor;
 use App\Models\Room;
+use App\Services\Billing\InvoiceCalculator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -15,6 +16,7 @@ class SkipMeterReading
     public function __construct(
         private readonly EnsureMeterReading $ensureMeterReading,
         private readonly ReadingFlow $readingFlow,
+        private readonly InvoiceCalculator $invoiceCalculator,
     ) {}
 
     /**
@@ -43,6 +45,8 @@ class SkipMeterReading
                 'meter_reset' => false,
                 'recorded_at' => null,
             ]);
+
+            $this->invoiceCalculator->recalculateDraft($period, $room, $reading->refresh());
 
             return $this->readingFlow->nextUnprocessed($period, $floor, $room);
         });

@@ -81,7 +81,9 @@ class BillingPeriodController extends Controller
             ->orderByDesc('starts_on')
             ->get();
 
-        return view('billing-periods.show', compact('period', 'periods', 'floorSummaries'));
+        $invoiceCount = $period->invoices()->count();
+
+        return view('billing-periods.show', compact('period', 'periods', 'floorSummaries', 'invoiceCount'));
     }
 
     private function configuredProperty(): ?Property

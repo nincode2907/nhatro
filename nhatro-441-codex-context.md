@@ -1594,35 +1594,6 @@ Invoice total phải đúng.
 
 Đổi `room_settings.electric_unit_price` sau đó không được làm invoice đã finalized thay đổi.
 
-## Codex prompt — Phase 3
-
-```text
-Read the context and ERD.
-
-Implement PHASE 3 only: the billing engine and draft invoices.
-
-Create one clear source of truth for invoice calculation, preferably an InvoiceCalculator/domain service.
-
-Never calculate financial totals independently in Blade, Excel, PDF, or DOCX code.
-
-Use integer VND.
-
-Snapshot:
-- rent,
-- electricity quantity/unit price/amount,
-- water quantity/unit price/amount,
-- vehicle,
-- garbage,
-- cable/internet,
-- other.
-
-Add tests proving snapshot behavior and invoice totals.
-
-Do not implement exports yet.
-
-Run tests, summarize changes, and stop.
-```
-
 ---
 
 # PHASE 4 — Invoice UI + print templates

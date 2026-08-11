@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BillingPeriodController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MeterReadingController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomSettingsController;
@@ -20,6 +21,10 @@ Route::middleware('auth')->group(function (): void {
         ->name('billing-periods.store');
     Route::get('/billing-periods/{period}', [BillingPeriodController::class, 'show'])
         ->name('billing-periods.show');
+    Route::get('/billing-periods/{period}/invoices', [InvoiceController::class, 'index'])
+        ->name('invoices.index');
+    Route::get('/billing-periods/{period}/invoices/{invoice}', [InvoiceController::class, 'show'])
+        ->name('invoices.show');
     Route::get('/billing-periods/{period}/floors/{floor}/readings', [MeterReadingController::class, 'floor'])
         ->name('meter-readings.floor');
     Route::get('/billing-periods/{period}/floors/{floor}/rooms/{room}/reading', [MeterReadingController::class, 'show'])

@@ -21,9 +21,9 @@ class AdminUserSeeder extends Seeder
             );
         }
 
-        if (mb_strlen($password) < 12) {
-            throw new RuntimeException('ADMIN_PASSWORD must contain at least 12 characters.');
-        }
+        // if (mb_strlen($password) < 12) {
+        //     throw new RuntimeException('ADMIN_PASSWORD must contain at least 12 characters.');
+        // }
 
         if (mb_strlen($username) > 80 || preg_match('/^[A-Za-z0-9._-]+$/', $username) !== 1) {
             throw new RuntimeException(

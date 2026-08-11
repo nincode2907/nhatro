@@ -8,6 +8,7 @@ use App\Models\BillingPeriod;
 use App\Models\Floor;
 use App\Models\MeterReading;
 use App\Models\Room;
+use App\Services\Billing\InvoiceCalculator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -16,6 +17,7 @@ class SaveMeterReading
     public function __construct(
         private readonly EnsureMeterReading $ensureMeterReading,
         private readonly ReadingFlow $readingFlow,
+        private readonly InvoiceCalculator $invoiceCalculator,
     ) {}
 
     /**
@@ -44,6 +46,8 @@ class SaveMeterReading
                 'meter_reset' => false,
                 'recorded_at' => now(),
             ]);
+
+            $this->invoiceCalculator->recalculateDraft($period, $room, $reading->refresh());
 
             return $this->readingFlow->nextUnprocessed($period, $floor, $room);
         });

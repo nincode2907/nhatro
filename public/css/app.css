@@ -1245,6 +1245,110 @@ a {
     min-height: 3.2rem;
 }
 
+/* Draft invoices */
+
+.period-invoice-link {
+    margin-top: 1rem;
+}
+
+.invoice-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.invoice-card {
+    display: grid;
+    gap: 1.1rem;
+    padding: 1.2rem;
+}
+
+.invoice-card-heading,
+.invoice-item,
+.invoice-grand-total {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.invoice-card-heading h2,
+.invoice-snapshot h2 {
+    margin: 0;
+}
+
+.invoice-card-total,
+.invoice-grand-total {
+    margin: 0;
+}
+
+.invoice-card-total dt,
+.invoice-grand-total dt {
+    color: var(--muted);
+    font-weight: 750;
+}
+
+.invoice-card-total dd,
+.invoice-grand-total dd {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.invoice-status-draft {
+    color: #175f86;
+    background: var(--info-soft);
+}
+
+.invoice-status-finalized {
+    color: #075c41;
+    background: var(--primary-soft);
+}
+
+.invoice-detail-header {
+    align-items: center;
+}
+
+.invoice-snapshot {
+    overflow: hidden;
+}
+
+.invoice-snapshot > h2 {
+    padding: 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 1.2rem;
+}
+
+.invoice-items {
+    display: grid;
+}
+
+.invoice-item {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.invoice-item-copy {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.invoice-item-copy span {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.invoice-item-amount {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.invoice-grand-total {
+    align-items: baseline;
+    padding: 1.2rem;
+    background: var(--primary-soft);
+}
+
 @media (max-width: 34rem) {
     .brand > span:last-child,
     .account-name {
@@ -1278,6 +1382,10 @@ a {
     }
 
     .floor-progress-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .invoice-list {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 

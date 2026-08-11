@@ -1,6 +1,6 @@
 # Nhà trọ 441
 
-Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 2 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng, cấu hình giá, kỳ tháng và luồng nhập chỉ số điện nước trên điện thoại. Chưa có hóa đơn, thanh toán, QR hay xuất file.
+Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 3 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng, cấu hình giá, kỳ tháng, luồng nhập chỉ số và hóa đơn nháp có snapshot. Chưa có chốt kỳ, thanh toán, QR hay xuất file.
 
 ## Yêu cầu
 
@@ -128,6 +128,7 @@ Trang hiện có:
 
 - `/billing-periods`: chọn/tạo kỳ tháng và xem tiến độ từng tầng.
 - `/billing-periods/{period}/floors/{floor}/rooms/{room}/reading`: ghi điện nước, nhảy phòng, bỏ qua có lý do và OK & Tiếp.
+- `/billing-periods/{period}/invoices`: xem các hóa đơn nháp đã tự tính từ chỉ số và cấu hình giá.
 - `/rooms`: danh sách tầng/phòng theo `sort_order`.
 - `/rooms/{room}/settings`: sửa trạng thái, thứ tự đi, giá, phí và cờ đồng hồ.
 
@@ -174,4 +175,4 @@ Test dùng SQLite `:memory:` và không ghi vào database local.
 
 ## Phạm vi tiếp theo
 
-Billing engine, hóa đơn, finalization, export và backup thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.
+Chốt kỳ, mẫu in, export và backup thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.

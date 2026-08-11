@@ -18,7 +18,7 @@
 
             @auth
                 <div class="account-actions">
-                    <a class="nav-link @if(request()->routeIs('billing-periods.*', 'meter-readings.*')) is-active @endif" href="{{ route('billing-periods.index') }}">
+                    <a class="nav-link @if(request()->routeIs('billing-periods.*', 'meter-readings.*', 'invoices.*')) is-active @endif" href="{{ route('billing-periods.index') }}">
                         Ghi số
                     </a>
                     <a class="nav-link @if(request()->routeIs('rooms.*')) is-active @endif" href="{{ route('rooms.index') }}">

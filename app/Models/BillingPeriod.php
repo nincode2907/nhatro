@@ -52,6 +52,12 @@ class BillingPeriod extends Model
         return $this->hasMany(MeterReading::class);
     }
 
+    /** @return HasMany<Invoice, $this> */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function label(): string
     {
         return 'Tháng '.$this->starts_on->format('m/Y');
