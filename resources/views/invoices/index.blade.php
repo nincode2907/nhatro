@@ -18,6 +18,15 @@
                 {{ $period->status->label() }}
             </span>
             @if ($invoices->isNotEmpty())
+                <a class="button button-secondary" href="{{ route('invoice-exports.xlsx', $period) }}">
+                    Tải Excel
+                </a>
+                <a class="button button-secondary" href="{{ route('invoice-exports.pdf-batch', $period) }}">
+                    Tải PDF
+                </a>
+                <a class="button button-secondary" href="{{ route('invoice-exports.docx-batch', $period) }}">
+                    Tải Word
+                </a>
                 <a class="button button-primary" href="{{ route('invoices.print-batch', $period) }}">
                     In 3 phiếu / A4
                 </a>

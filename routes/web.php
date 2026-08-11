@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BillingPeriodController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceExportController;
 use App\Http\Controllers\MeterReadingController;
 use App\Http\Controllers\PropertyStructureController;
 use App\Http\Controllers\RoomController;
@@ -26,10 +27,20 @@ Route::middleware('auth')->group(function (): void {
         ->name('invoices.index');
     Route::get('/billing-periods/{period}/invoices/print', [InvoiceController::class, 'printBatch'])
         ->name('invoices.print-batch');
+    Route::get('/billing-periods/{period}/exports/invoices.xlsx', [InvoiceExportController::class, 'xlsx'])
+        ->name('invoice-exports.xlsx');
+    Route::get('/billing-periods/{period}/exports/invoices.pdf', [InvoiceExportController::class, 'pdfBatch'])
+        ->name('invoice-exports.pdf-batch');
+    Route::get('/billing-periods/{period}/exports/invoices.docx', [InvoiceExportController::class, 'docxBatch'])
+        ->name('invoice-exports.docx-batch');
     Route::get('/billing-periods/{period}/invoices/{invoice}', [InvoiceController::class, 'show'])
         ->name('invoices.show');
     Route::get('/billing-periods/{period}/invoices/{invoice}/print', [InvoiceController::class, 'printSingle'])
         ->name('invoices.print-single');
+    Route::get('/billing-periods/{period}/invoices/{invoice}/exports/invoice.pdf', [InvoiceExportController::class, 'pdfSingle'])
+        ->name('invoice-exports.pdf-single');
+    Route::get('/billing-periods/{period}/invoices/{invoice}/exports/invoice.docx', [InvoiceExportController::class, 'docxSingle'])
+        ->name('invoice-exports.docx-single');
     Route::get('/billing-periods/{period}/floors/{floor}/readings', [MeterReadingController::class, 'floor'])
         ->name('meter-readings.floor');
     Route::get('/billing-periods/{period}/floors/{floor}/rooms/{room}/reading', [MeterReadingController::class, 'show'])

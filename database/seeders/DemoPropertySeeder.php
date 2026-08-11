@@ -14,10 +14,11 @@ class DemoPropertySeeder extends Seeder
 {
     /** @var array<string, int> */
     private const FLOOR_ROOM_COUNTS = [
-        '1' => 11,
-        '2' => 11,
+        '1' => 9,
+        '2' => 6,
         '3' => 11,
-        '4' => 12,
+        '4' => 11,
+        '5' => 11,
     ];
 
     /** @var array<string, int|bool> */

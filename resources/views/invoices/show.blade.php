@@ -21,6 +21,12 @@
             <span class="status-badge invoice-status-{{ strtolower($invoice->status->value) }}">
                 {{ $invoice->status->label() }}
             </span>
+            <a class="button button-secondary" href="{{ route('invoice-exports.pdf-single', [$period, $invoice]) }}">
+                Tải PDF
+            </a>
+            <a class="button button-secondary" href="{{ route('invoice-exports.docx-single', [$period, $invoice]) }}">
+                Tải Word
+            </a>
             <a class="button button-primary" href="{{ route('invoices.print-single', [$period, $invoice]) }}">
                 In khổ A5
             </a>

@@ -1,8 +1,44 @@
 # syntax=docker/dockerfile:1.7
 
-FROM composer:2.8 AS dependencies
+FROM php:8.4-cli-alpine AS php-base
+
+RUN apk add --no-cache \
+        curl \
+        freetype \
+        libjpeg-turbo \
+        libpng \
+        libxml2 \
+        libzip \
+        oniguruma \
+        sqlite-libs \
+        su-exec \
+    && apk add --no-cache --virtual .build-dependencies \
+        $PHPIZE_DEPS \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        libxml2-dev \
+        libzip-dev \
+        oniguruma-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" \
+        dom \
+        gd \
+        mbstring \
+        opcache \
+        simplexml \
+        xml \
+        xmlreader \
+        xmlwriter \
+        zip \
+    && apk del .build-dependencies \
+    && php -r 'exit(extension_loaded("pdo_sqlite") && extension_loaded("sqlite3") && extension_loaded("gd") && extension_loaded("zip") ? 0 : 1);'
+
+FROM php-base AS dependencies
 
 WORKDIR /app
+
+COPY --from=composer:2.8 /usr/bin/composer /usr/local/bin/composer
 
 COPY composer.json composer.lock ./
 
@@ -20,21 +56,7 @@ RUN composer dump-autoload \
     --no-dev \
     --no-interaction
 
-FROM php:8.4-cli-alpine AS application
-
-RUN apk add --no-cache \
-        curl \
-        oniguruma \
-        sqlite-libs \
-        su-exec \
-    && apk add --no-cache --virtual .build-dependencies \
-        $PHPIZE_DEPS \
-        oniguruma-dev \
-    && docker-php-ext-install -j"$(nproc)" \
-        mbstring \
-        opcache \
-    && apk del .build-dependencies \
-    && php -r 'exit(extension_loaded("pdo_sqlite") && extension_loaded("sqlite3") ? 0 : 1);'
+FROM php-base AS application
 
 WORKDIR /var/www/html
 

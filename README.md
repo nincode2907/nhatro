@@ -1,10 +1,10 @@
 # Nhà trọ 441
 
-Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 3 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng, cấu hình giá, kỳ tháng, luồng nhập chỉ số và hóa đơn nháp có snapshot. Chưa có chốt kỳ, thanh toán, QR hay xuất file.
+Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 5 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng, cấu hình giá, kỳ tháng, luồng nhập chỉ số, hóa đơn nháp có snapshot, mẫu in và xuất XLSX/PDF/DOCX. Chưa có chốt kỳ, thanh toán hay QR.
 
 ## Yêu cầu
 
-- PHP 8.3 trở lên với các extension `curl`, `fileinfo`, `mbstring`, `openssl`, `pdo_sqlite` và `sqlite3`.
+- PHP 8.3 trở lên với các extension `curl`, `dom`, `fileinfo`, `gd`, `libxml`, `mbstring`, `openssl`, `pdo_sqlite`, `simplexml`, `sqlite3`, `xml`, `xmlreader`, `xmlwriter` và `zip`.
 - Composer 2.
 - Node.js không bắt buộc cho giao diện hiện tại; các file Vite được giữ lại cho các phase sau.
 
@@ -131,6 +131,9 @@ Trang hiện có:
 - `/billing-periods/{period}/invoices`: xem các hóa đơn nháp đã tự tính từ chỉ số và cấu hình giá.
 - `/billing-periods/{period}/invoices/{invoice}`: xem hóa đơn rõ ràng và mở bản in A5.
 - `/billing-periods/{period}/invoices/print`: xem trước/in hàng loạt 3 phiếu trên mỗi tờ A4.
+- `/billing-periods/{period}/exports/invoices.xlsx`: tải bảng Excel tháng, gồm chỉ số cũ/mới, lượng dùng, đơn giá, phí, tổng, trạng thái và ghi chú.
+- `/billing-periods/{period}/exports/invoices.pdf`: tải PDF hóa đơn hàng loạt; từng hóa đơn cũng có nút tải PDF riêng.
+- `/billing-periods/{period}/exports/invoices.docx`: tải Word có thể chỉnh sửa; từng hóa đơn cũng có nút tải Word riêng.
 - `/rooms`: danh sách tầng/phòng theo `sort_order`.
 - `/rooms/{room}/settings`: sửa trạng thái, thứ tự đi, giá, phí và cờ đồng hồ.
 - `/property-structure`: thêm/sửa tầng, thêm/sửa/chuyển phòng, xóa phòng chưa có lịch sử và ngừng sử dụng phòng đã có lịch sử.
@@ -180,4 +183,4 @@ Test dùng SQLite `:memory:` và không ghi vào database local.
 
 ## Phạm vi tiếp theo
 
-Chốt kỳ, mẫu in, export và backup thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.
+Chốt kỳ, thanh toán, QR và backup thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.

@@ -18,17 +18,20 @@ class InvoiceDocument
      */
     public function rows(): array
     {
-        $items = $this->invoice->items->keyBy(
-            fn (InvoiceItem $item): string => $item->type->value,
-        );
-
         return array_map(
             fn (InvoiceItemType $type): array => [
                 'type' => $type,
                 'label' => $type->label(),
-                'item' => $items->get($type->value),
+                'item' => $this->item($type),
             ],
             InvoiceItemType::cases(),
+        );
+    }
+
+    public function item(InvoiceItemType $type): ?InvoiceItem
+    {
+        return $this->invoice->items->first(
+            fn (InvoiceItem $item): bool => $item->type === $type,
         );
     }
 }
