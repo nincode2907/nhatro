@@ -1545,33 +1545,6 @@ Tầng 1
 → xem progress đúng
 ```
 
-## Codex prompt — Phase 2
-
-```text
-Read the context and ERD files.
-
-Implement PHASE 2 only: Billing Periods and the complete mobile Meter Reading flow.
-
-This is the highest-priority UX phase.
-
-Requirements that must be preserved:
-- always show room number plus position, e.g. "PHÒNG 101 — 1/11";
-- separately show processed progress;
-- previous electricity/water readings are auto-loaded;
-- current readings are entered once;
-- OK & Next saves and jumps to the next unprocessed room by sort_order;
-- DS PHÒNG shows every room on the floor with status and allows direct jumping;
-- Skip requires a reason;
-- current < previous must be rejected unless an explicit meter-reset exception is implemented;
-- VACANT and SKIPPED are not the same state.
-
-Add automated tests for the flow and data integrity.
-
-Do not implement invoices or exports yet.
-
-After implementation, run tests and stop.
-```
-
 ---
 
 # PHASE 3 — Billing engine + draft invoices

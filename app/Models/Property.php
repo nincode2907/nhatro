@@ -26,4 +26,10 @@ class Property extends Model
     {
         return $this->hasMany(Floor::class);
     }
+
+    /** @return HasMany<BillingPeriod, $this> */
+    public function billingPeriods(): HasMany
+    {
+        return $this->hasMany(BillingPeriod::class);
+    }
 }

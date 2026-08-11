@@ -9,6 +9,10 @@
     --primary-dark: #0a4835;
     --primary-soft: #dff3eb;
     --danger: #a12626;
+    --warning: #8a570f;
+    --warning-soft: #fff3cf;
+    --info: #175f86;
+    --info-soft: #e4f3fb;
     --shadow: 0 16px 40px rgba(23, 33, 29, 0.08);
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -36,8 +40,44 @@ textarea {
     font: inherit;
 }
 
+button,
+a,
+input,
+select,
+textarea {
+    touch-action: manipulation;
+}
+
+svg {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 a {
     color: inherit;
+}
+
+.skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1000;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    background: var(--primary-dark);
+    font-weight: 800;
+    transform: translateY(-150%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
 }
 
 .container {
@@ -274,6 +314,29 @@ a {
     cursor: pointer;
     font-weight: 800;
     text-decoration: none;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, opacity 180ms ease;
+}
+
+.button:active,
+.nav-link:active,
+.dialog-room-row:active,
+.period-row:active {
+    opacity: 0.76;
+}
+
+.button:focus-visible,
+.nav-link:focus-visible,
+.dialog-room-row:focus-visible,
+.period-row:focus-visible,
+.icon-button:focus-visible,
+.back-link:focus-visible {
+    outline: 3px solid rgba(17, 97, 73, 0.24);
+    outline-offset: 2px;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .button-primary {
@@ -289,6 +352,16 @@ a {
     border-color: var(--border);
     color: var(--text);
     background: var(--surface);
+}
+
+.button-warning {
+    border-color: #e5bf6a;
+    color: #6d4208;
+    background: var(--warning-soft);
+}
+
+.button-warning:hover {
+    background: #ffe8a8;
 }
 
 .button-small {
@@ -540,6 +613,696 @@ a {
     border-radius: 0.9rem;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 -8px 24px rgba(23, 33, 29, 0.1);
+}
+
+/* Billing periods */
+
+.billing-header,
+.period-detail-header {
+    align-items: center;
+}
+
+.period-create {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.2rem, 5vw, 1.8rem);
+}
+
+.period-create h2,
+.period-history h2,
+.floor-progress-card h2 {
+    margin: 0;
+}
+
+.period-create .muted {
+    margin: 0.45rem 0 0;
+}
+
+.period-create-form {
+    display: grid;
+    gap: 0.8rem;
+    align-items: end;
+}
+
+.period-create-form .button {
+    min-height: 3.2rem;
+}
+
+.period-history {
+    margin-top: 2rem;
+}
+
+.section-heading,
+.floor-progress-heading,
+.progress-copy,
+.meter-heading,
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.period-list,
+.floor-progress-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.period-row {
+    display: flex;
+    min-height: 5.25rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    text-decoration: none;
+}
+
+.period-row strong,
+.period-row small {
+    display: block;
+}
+
+.period-row strong {
+    font-size: 1.12rem;
+}
+
+.period-row small {
+    margin-top: 0.15rem;
+    color: var(--muted);
+}
+
+.period-status-open {
+    color: #0a5c42;
+    background: var(--primary-soft);
+}
+
+.period-status-finalized {
+    color: #4f5a56;
+    background: #e8ecea;
+}
+
+.compact-empty h3,
+.compact-empty p {
+    margin: 0;
+}
+
+.compact-empty p {
+    margin-top: 0.35rem;
+    color: var(--muted);
+}
+
+.period-switcher {
+    margin: 1.25rem 0;
+}
+
+.floor-progress-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.2rem;
+}
+
+.floor-progress-heading {
+    align-items: flex-start;
+}
+
+.completion-mark {
+    display: grid;
+    min-width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--muted);
+    background: #eef2f0;
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.completion-mark.is-complete {
+    color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.progress-copy strong,
+.progress-copy span {
+    display: block;
+}
+
+.progress-copy span {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.progress-track {
+    height: 0.55rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e1e8e5;
+}
+
+.progress-track span {
+    display: block;
+    min-width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary);
+    transition: width 220ms ease;
+}
+
+/* Mobile meter reading flow */
+
+.reading-shell {
+    width: min(100%, 44rem);
+    margin-inline: auto;
+}
+
+.reading-topbar {
+    display: flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 750;
+}
+
+.back-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.reading-notice {
+    margin-block: 0.75rem;
+}
+
+.reading-progress {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 0.9rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.reading-room-header {
+    padding-block: 1.6rem 1.2rem;
+    text-align: center;
+}
+
+.reading-room-header h1 {
+    margin: 0;
+    font-size: clamp(1.85rem, 9vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+}
+
+.reading-room-header h1 span {
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: 0.58em;
+    letter-spacing: -0.02em;
+}
+
+.room-state-line {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+}
+
+.reading-status-pending {
+    color: #7a520f;
+    background: #fff0be;
+}
+
+.reading-status-recorded {
+    color: #075c41;
+    background: var(--primary-soft);
+}
+
+.reading-status-skipped {
+    color: #175f86;
+    background: var(--info-soft);
+}
+
+.reading-form,
+.reading-meter-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.reading-meter-card {
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(23, 33, 29, 0.06);
+}
+
+.meter-heading {
+    justify-content: flex-start;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.meter-heading > .status-badge {
+    margin-left: auto;
+}
+
+.meter-heading h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.meter-heading .eyebrow {
+    margin-bottom: 0.15rem;
+}
+
+.meter-icon {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 0.85rem;
+}
+
+.meter-icon svg {
+    width: 1.45rem;
+    height: 1.45rem;
+}
+
+.meter-icon-electricity {
+    color: #835914;
+    background: #fff1c8;
+}
+
+.meter-icon-water {
+    color: #17658c;
+    background: #dff2fb;
+}
+
+.reading-values {
+    display: grid;
+    gap: 1rem;
+    padding: 1.1rem;
+}
+
+.reading-stat,
+.usage-result {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.reading-stat {
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.75rem;
+    background: #f1f5f3;
+}
+
+.reading-stat > span,
+.usage-result > span {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.reading-stat strong,
+.usage-result strong {
+    font-variant-numeric: tabular-nums;
+    font-size: 1.35rem;
+}
+
+.reading-stat small,
+.usage-result small {
+    color: var(--muted);
+}
+
+.reading-input-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+}
+
+.reading-input-wrap input {
+    min-width: 0;
+    min-height: 4.15rem;
+    padding: 0.55rem 0.8rem;
+    border: 2px solid #91a59e;
+    border-radius: 0.8rem 0 0 0.8rem;
+    color: var(--text);
+    background: #fff;
+    font-size: clamp(1.65rem, 8vw, 2.25rem);
+    font-weight: 850;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.reading-input-wrap input::-webkit-outer-spin-button,
+.reading-input-wrap input::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+}
+
+.reading-input-wrap input[type='number'] {
+    appearance: textfield;
+}
+
+.reading-input-wrap input:focus {
+    border-color: var(--primary);
+    outline: 3px solid rgba(17, 97, 73, 0.17);
+}
+
+.reading-input-wrap input[aria-invalid='true'] {
+    border-color: var(--danger);
+    outline-color: rgba(161, 38, 38, 0.17);
+}
+
+.reading-input-wrap > span {
+    display: flex;
+    align-items: center;
+    padding-inline: 0.8rem;
+    border: 2px solid #91a59e;
+    border-left: 0;
+    border-radius: 0 0.8rem 0.8rem 0;
+    color: var(--muted);
+    background: #f1f5f3;
+    font-weight: 750;
+}
+
+.live-meter-error[hidden] {
+    display: none;
+}
+
+.usage-result {
+    padding: 0.85rem 0.95rem;
+    border: 1px solid #b7ddce;
+    border-radius: 0.8rem;
+    background: var(--primary-soft);
+}
+
+.usage-result strong {
+    color: var(--primary-dark);
+}
+
+.disabled-meter-copy {
+    margin: 0;
+    padding: 1.15rem;
+    color: var(--muted);
+}
+
+.reading-note {
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.reading-note summary {
+    min-height: 3.25rem;
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.reading-note .field {
+    padding: 0 1rem 1rem;
+}
+
+.reading-actions-secondary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.reading-actions-secondary .button {
+    min-height: 3.25rem;
+    gap: 0.45rem;
+}
+
+.reading-primary-action {
+    position: sticky;
+    bottom: 0;
+    z-index: 8;
+    margin: 0 -0.35rem;
+    padding: 0.75rem 0.35rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: linear-gradient(transparent, var(--background) 22%);
+}
+
+.reading-primary-action .button {
+    min-height: 3.75rem;
+    gap: 0.55rem;
+    border-radius: 0.9rem;
+    box-shadow: 0 10px 24px rgba(17, 97, 73, 0.22);
+    font-size: 1.05rem;
+}
+
+/* Dialogs and room jumping */
+
+.app-dialog {
+    width: min(100% - 1rem, 34rem);
+    max-height: min(88vh, 48rem);
+    margin: auto auto 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 1.2rem 1.2rem 0 0;
+    color: var(--text);
+    background: var(--surface);
+    box-shadow: 0 -20px 60px rgba(23, 33, 29, 0.24);
+}
+
+.app-dialog::backdrop {
+    background: rgba(10, 25, 20, 0.58);
+}
+
+.dialog-sheet {
+    display: flex;
+    max-height: min(88vh, 48rem);
+    flex-direction: column;
+}
+
+.dialog-header {
+    flex: 0 0 auto;
+    padding: 1.15rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.dialog-header h2,
+.dialog-header p {
+    margin: 0;
+}
+
+.dialog-header p:last-child {
+    margin-top: 0.2rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.icon-button {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text);
+    background: #fff;
+    cursor: pointer;
+}
+
+.dialog-room-list {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.dialog-room-row {
+    display: grid;
+    min-height: 4.25rem;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+}
+
+.dialog-room-row.is-current {
+    background: #edf8f4;
+    box-shadow: inset 3px 0 var(--primary);
+}
+
+.room-list-status {
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    place-items: center;
+    border-radius: 999px;
+}
+
+.room-list-status svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.dialog-room-identity strong,
+.dialog-room-identity small {
+    display: block;
+}
+
+.dialog-room-identity strong {
+    font-size: 1.05rem;
+}
+
+.dialog-room-identity small,
+.room-position {
+    color: var(--muted);
+    font-size: 0.84rem;
+}
+
+.room-position {
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+}
+
+.skip-form {
+    overflow-y: auto;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+}
+
+.skip-form > :not(.dialog-header) {
+    margin-inline: 1.15rem;
+}
+
+.skip-form .notice {
+    margin-top: 1rem;
+}
+
+.skip-reasons {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 1rem;
+    padding: 0;
+    border: 0;
+}
+
+.skip-reasons legend {
+    margin-bottom: 0.55rem;
+    font-weight: 800;
+}
+
+.radio-card {
+    display: flex;
+    min-height: 3.25rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.radio-card:has(input:checked) {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+.radio-card input {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: 0 0 auto;
+    accent-color: var(--primary);
+}
+
+.skip-form > .field {
+    margin-top: 1rem;
+}
+
+.vacant-separation-note {
+    padding: 0.75rem 0.85rem;
+    border-radius: 0.75rem;
+    color: #68490f;
+    background: var(--warning-soft);
+    font-size: 0.88rem;
+}
+
+.dialog-actions {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.dialog-actions .button {
+    min-height: 3.2rem;
+}
+
+@media (max-width: 34rem) {
+    .brand > span:last-child,
+    .account-name {
+        display: none;
+    }
+
+    .header-content {
+        gap: 0.5rem;
+    }
+
+    .account-actions {
+        gap: 0.35rem;
+    }
+
+    .nav-link {
+        padding-inline: 0.55rem;
+    }
+
+    .button-small {
+        padding-inline: 0.55rem;
+    }
+
+    .period-detail-header {
+        align-items: flex-start;
+    }
+}
+
+@media (min-width: 42rem) {
+    .period-create-form {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .floor-progress-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .app-dialog {
+        margin: auto;
+        border-radius: 1.2rem;
+    }
+}
+
+@media (orientation: landscape) and (min-width: 42rem) {
+    .reading-meter-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
 }
 
 @media (min-width: 42rem) {

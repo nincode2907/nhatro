@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
     <header class="site-header">
         <div class="container header-content">
             <a class="brand" href="{{ auth()->check() ? route('home') : route('login') }}">
@@ -17,6 +18,9 @@
 
             @auth
                 <div class="account-actions">
+                    <a class="nav-link @if(request()->routeIs('billing-periods.*', 'meter-readings.*')) is-active @endif" href="{{ route('billing-periods.index') }}">
+                        Ghi số
+                    </a>
                     <a class="nav-link @if(request()->routeIs('rooms.*')) is-active @endif" href="{{ route('rooms.index') }}">
                         Phòng
                     </a>
@@ -30,8 +34,9 @@
         </div>
     </header>
 
-    <main class="container page-content">
+    <main class="container page-content" id="main-content" tabindex="-1">
         @yield('content')
     </main>
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>

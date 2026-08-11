@@ -1,6 +1,6 @@
 # Nhà trọ 441
 
-Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 1 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng và cấu hình giá riêng cho từng phòng. Chưa có người thuê, chỉ số, hóa đơn, thanh toán, QR hay xuất file.
+Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 2 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng, cấu hình giá, kỳ tháng và luồng nhập chỉ số điện nước trên điện thoại. Chưa có hóa đơn, thanh toán, QR hay xuất file.
 
 ## Yêu cầu
 
@@ -111,7 +111,7 @@ php artisan serve
 
 Mở `http://127.0.0.1:8000`. Route `/` sẽ chuyển tới `/login` nếu chưa đăng nhập.
 
-## Dữ liệu demo Phase 1
+## Dữ liệu demo
 
 `DemoPropertySeeder` tạo một property theo `PROPERTY_CODE` / `PROPERTY_NAME` trong `.env`, bốn tầng và 45 phòng demo:
 
@@ -126,6 +126,8 @@ Seeder có thể chạy lại mà không tạo bản ghi trùng và không ghi �
 
 Trang hiện có:
 
+- `/billing-periods`: chọn/tạo kỳ tháng và xem tiến độ từng tầng.
+- `/billing-periods/{period}/floors/{floor}/rooms/{room}/reading`: ghi điện nước, nhảy phòng, bỏ qua có lý do và OK & Tiếp.
 - `/rooms`: danh sách tầng/phòng theo `sort_order`.
 - `/rooms/{room}/settings`: sửa trạng thái, thứ tự đi, giá, phí và cờ đồng hồ.
 
@@ -172,4 +174,4 @@ Test dùng SQLite `:memory:` và không ghi vào database local.
 
 ## Phạm vi tiếp theo
 
-Billing periods, chỉ số, hóa đơn và export thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.
+Billing engine, hóa đơn, finalization, export và backup thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.
