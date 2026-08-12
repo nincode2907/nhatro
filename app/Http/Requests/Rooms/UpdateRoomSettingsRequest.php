@@ -24,7 +24,7 @@ class UpdateRoomSettingsRequest extends FormRequest
 
         return [
             'status' => ['required', Rule::enum(RoomStatus::class)],
-            'sort_order' => ['required', 'integer', 'min:1', 'max:10000'],
+            'sort_order' => ['nullable', 'integer', 'min:1', 'max:10000'],
             'room_note' => ['nullable', 'string', 'max:1000'],
             'rent_amount' => $moneyRules,
             'electricity_unit_price' => $moneyRules,

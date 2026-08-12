@@ -39,7 +39,7 @@ class UpdateRoomStructureRequest extends FormRequest
                     ->where(fn ($query) => $query->where('floor_id', $floorId))
                     ->ignore($roomId),
             ],
-            'sort_order' => ['required', 'integer', 'min:1', 'max:10000'],
+            'sort_order' => ['nullable', 'integer', 'min:1', 'max:10000'],
             'status' => ['required', Rule::enum(RoomStatus::class)],
         ];
     }

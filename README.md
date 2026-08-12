@@ -1,6 +1,6 @@
 # Nhà trọ 441
 
-Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Phase 5 bao gồm khung dự án, SQLite, một tài khoản quản trị, cấu trúc nhà/tầng/phòng, cấu hình giá, kỳ tháng, luồng nhập chỉ số, hóa đơn nháp có snapshot, mẫu in và xuất XLSX/PDF/DOCX. Chưa có chốt kỳ, thanh toán hay QR.
+Ứng dụng Laravel nội bộ, local-first cho Nhà trọ 441. Ứng dụng dùng SQLite và có lệnh backup an toàn để vận hành trong mạng gia đình. Chưa có thanh toán hay QR.
 
 ## Yêu cầu
 
@@ -110,6 +110,7 @@ SQLite và khóa ứng dụng nằm trong volume `nhatro-441_app-data`; storage 
 Trong `.env.docker`, đặt IP private của máy chạy Docker, ví dụ:
 
 ```dotenv
+APP_BIND_IP=192.168.1.20
 APP_URL=http://192.168.1.20:8000
 ```
 
@@ -207,9 +208,10 @@ Nếu người thuê và gia đình dùng chung Wi-Fi, nên tách mạng quản 
 
 - Database mặc định: `database/database.sqlite`, nằm ngoài `public/` và bị Git ignore.
 - Foreign keys được bật.
-- `busy_timeout=5000ms`, WAL journal mode và `synchronous=NORMAL` được cấu hình cho các thao tác ghi ngắn trên LAN.
+- `busy_timeout=5000ms`, WAL, transaction `IMMEDIATE` và `synchronous=NORMAL` được cấu hình cho hai thiết bị gia đình thực hiện các thao tác ghi ngắn.
 - File `database.sqlite-wal` và `database.sqlite-shm` nếu xuất hiện cũng không được commit.
-- Backup/restore an toàn thuộc Phase 7, chưa được triển khai trong Phase 0.
+- Tạo backup bằng `php artisan app:backup-database`; retention mặc định là 30 bản và có thể đổi bằng `DB_BACKUP_RETENTION` hoặc `--retention`.
+- Hướng dẫn đầy đủ về backup, restore, chép sang OneDrive/Google Drive và chạy LAN nằm tại [docs/local-operations.md](docs/local-operations.md).
 
 ## Kiểm tra
 
@@ -229,4 +231,4 @@ Test dùng SQLite `:memory:` và không ghi vào database local.
 
 ## Phạm vi tiếp theo
 
-Chốt kỳ, thanh toán, QR và backup thuộc các phase sau trong `nhatro-441-codex-context.md`; chưa được triển khai.
+Thanh toán, QR và các thay đổi sau khi dùng thực tế thuộc các phase sau; Phase 7 không thay đổi hệ quản trị SQLite.

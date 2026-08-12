@@ -53,6 +53,36 @@ document.querySelectorAll('[data-print-page]').forEach((button) => {
     button.addEventListener('click', () => window.print());
 });
 
+document.querySelectorAll('[data-walk-order]').forEach((container) => {
+    const status = container.querySelector('select[name="status"]');
+    const field = container.querySelector('[data-walk-order-field]');
+    const input = field?.querySelector('input[name="sort_order"]');
+    const help = field?.querySelector('[data-walk-order-help]');
+    const nextWalkOrder = Number(container.dataset.nextWalkOrder || 1);
+
+    if (!status || !field || !input) return;
+
+    const refreshWalkOrder = () => {
+        const usesWalkOrder = status.value === 'OCCUPIED';
+        field.hidden = !usesWalkOrder;
+        input.disabled = !usesWalkOrder;
+        input.required = usesWalkOrder;
+
+        if (usesWalkOrder && (!input.value || Number(input.value) < 1)) {
+            input.value = String(nextWalkOrder);
+        }
+
+        if (help) {
+            help.textContent = usesWalkOrder
+                ? 'Đổi vị trí sẽ tự đẩy các phòng ở giữa xuống một bậc.'
+                : 'Phòng này không tham gia thứ tự đi thực tế.';
+        }
+    };
+
+    status.addEventListener('change', refreshWalkOrder);
+    refreshWalkOrder();
+});
+
 const readingForm = document.querySelector('[data-meter-reading-form]');
 
 if (readingForm) {

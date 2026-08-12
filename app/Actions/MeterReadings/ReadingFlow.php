@@ -3,6 +3,7 @@
 namespace App\Actions\MeterReadings;
 
 use App\Enums\MeterReadingStatus;
+use App\Enums\RoomStatus;
 use App\Models\BillingPeriod;
 use App\Models\Floor;
 use App\Models\MeterReading;
@@ -17,6 +18,7 @@ class ReadingFlow
     {
         return $floor->rooms()
             ->where('is_active', true)
+            ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [RoomStatus::Occupied->value])
             ->orderBy('sort_order')
             ->orderBy('room_number')
             ->get();
@@ -59,9 +61,14 @@ class ReadingFlow
             return $pending->first();
         }
 
-        return $pending->first(fn (Room $room): bool => $room->sort_order > $after->sort_order
-            || ($room->sort_order === $after->sort_order
-                && strnatcmp($room->room_number, $after->room_number) > 0)
+        $afterIndex = $rooms->search(fn (Room $room): bool => $room->is($after));
+
+        if ($afterIndex === false) {
+            return $pending->first();
+        }
+
+        return $pending->first(
+            fn (Room $room): bool => $rooms->search(fn (Room $candidate): bool => $candidate->is($room)) > $afterIndex,
         ) ?? $pending->first();
     }
 

@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@php($editing = $room !== null)
+@php
+    $editing = $room !== null;
+    $selectedStatus = old('status', $room?->status->value ?? \App\Enums\RoomStatus::Occupied->value);
+    $usesWalkOrder = $selectedStatus === \App\Enums\RoomStatus::Occupied->value;
+@endphp
 
 @section('title', ($editing ? 'Sửa phòng '.$room->room_number : 'Thêm phòng').' — '.config('app.name'))
 
@@ -24,7 +28,7 @@
             @method('PUT')
         @endif
 
-        <div class="form-grid two-columns">
+        <div class="form-grid two-columns" data-walk-order data-next-walk-order="{{ $suggestedSortOrder }}">
             @if ($editing)
                 <div class="field">
                     <label for="floor_id">Tầng</label>
@@ -46,10 +50,14 @@
                 @error('room_number') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
-            <div class="field">
+            <div class="field" data-walk-order-field @unless($usesWalkOrder) hidden @endunless>
                 <label for="sort_order">Thứ tự đi thực tế</label>
-                <input id="sort_order" name="sort_order" type="number" inputmode="numeric" min="1" max="10000" required
-                       value="{{ old('sort_order', $suggestedSortOrder) }}" aria-invalid="{{ $errors->has('sort_order') ? 'true' : 'false' }}">
+                <input id="sort_order" name="sort_order" type="number" inputmode="numeric" min="1" max="10000"
+                       value="{{ old('sort_order', $suggestedSortOrder) }}" aria-invalid="{{ $errors->has('sort_order') ? 'true' : 'false' }}"
+                       @disabled(! $usesWalkOrder) @required($usesWalkOrder)>
+                <p class="field-help" data-walk-order-help>
+                    {{ $usesWalkOrder ? 'Đổi vị trí sẽ tự đẩy các phòng ở giữa xuống một bậc.' : 'Phòng này không tham gia thứ tự đi thực tế.' }}
+                </p>
                 @error('sort_order') <p class="field-error">{{ $message }}</p> @enderror
             </div>
 
@@ -57,7 +65,7 @@
                 <label for="status">Trạng thái</label>
                 <select id="status" name="status" required>
                     @foreach ($statuses as $status)
-                        <option value="{{ $status->value }}" @selected(old('status', $room?->status->value ?? \App\Enums\RoomStatus::Occupied->value) === $status->value)>
+                        <option value="{{ $status->value }}" @selected($selectedStatus === $status->value)>
                             {{ $status->label() }}
                         </option>
                     @endforeach

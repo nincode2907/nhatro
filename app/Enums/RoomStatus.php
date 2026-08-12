@@ -30,4 +30,9 @@ enum RoomStatus: string
     {
         return $this !== self::Inactive;
     }
+
+    public function usesWalkOrder(): bool
+    {
+        return $this === self::Occupied;
+    }
 }

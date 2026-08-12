@@ -8,16 +8,27 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateRoomSettings
 {
+    public function __construct(private readonly ArrangeRoomWalkOrder $arrangeWalkOrder)
+    {
+    }
+
     /**
      * @param  array<string, mixed>  $data
      */
     public function handle(Room $room, array $data): Room
     {
         return DB::transaction(function () use ($room, $data): Room {
+            $room = Room::query()->lockForUpdate()->findOrFail($room->id);
             $status = RoomStatus::from($data['status']);
+            $sortOrder = $this->arrangeWalkOrder->handle(
+                $room,
+                $room->floor_id,
+                $status,
+                isset($data['sort_order']) ? (int) $data['sort_order'] : null,
+            );
 
             $room->update([
-                'sort_order' => (int) $data['sort_order'],
+                'sort_order' => $sortOrder,
                 'status' => $status,
                 'note' => $data['room_note'] ?? null,
                 'is_active' => $status->isActive(),

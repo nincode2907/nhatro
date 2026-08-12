@@ -33,6 +33,10 @@ class RoomSettingsController extends Controller
             'room' => $room,
             'settings' => $settings,
             'statuses' => RoomStatus::cases(),
+            'nextWalkOrder' => max(1, (int) $room->floor->rooms()
+                ->where('status', RoomStatus::Occupied->value)
+                ->whereKeyNot($room->id)
+                ->max('sort_order') + 1),
         ]);
     }
 

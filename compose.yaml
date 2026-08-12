@@ -9,7 +9,7 @@ services:
     init: true
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8000}:8000"
+      - "${APP_BIND_IP:-127.0.0.1}:${APP_PORT:-8000}:8000"
     environment:
       APP_NAME: "${PROPERTY_NAME:-Nhà trọ 441 BPL}"
       APP_ENV: local
@@ -28,6 +28,8 @@ services:
       DB_BUSY_TIMEOUT: "5000"
       DB_JOURNAL_MODE: WAL
       DB_SYNCHRONOUS: NORMAL
+      DB_BACKUP_PATH: /data/backups
+      DB_BACKUP_RETENTION: "${DB_BACKUP_RETENTION:-30}"
       SESSION_DRIVER: database
       SESSION_ENCRYPT: "true"
       SESSION_SECURE_COOKIE: "false"

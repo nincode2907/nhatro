@@ -18,6 +18,7 @@ class SqliteConfigurationTest extends TestCase
         $this->assertSame(5000, $sqlite['busy_timeout']);
         $this->assertSame('WAL', $sqlite['journal_mode']);
         $this->assertSame('NORMAL', $sqlite['synchronous']);
+        $this->assertSame('IMMEDIATE', $sqlite['transaction_mode']);
         $this->assertSame(1, DB::scalar('PRAGMA foreign_keys'));
         $this->assertSame(5000, DB::scalar('PRAGMA busy_timeout'));
     }

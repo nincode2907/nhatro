@@ -1747,26 +1747,6 @@ Dùng local ổn định.
 8. Security checklist.
 9. Tests where practical.
 
-## Codex prompt — Phase 7
-
-```text
-Implement PHASE 7 only: local operational hardening and SQLite backup.
-
-Create a safe database backup command with configurable retention.
-
-Document:
-- how to back up,
-- how to restore,
-- how to copy backups to OneDrive/Google Drive manually,
-- how to run the app on a LAN,
-- how to avoid exposing it publicly.
-
-Review SQLite WAL/locking behavior for two household devices making short writes.
-
-Do not migrate to MongoDB/MySQL/PostgreSQL.
-
-Run tests and stop.
-```
 
 ---
 

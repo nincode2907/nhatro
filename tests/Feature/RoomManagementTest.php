@@ -60,11 +60,10 @@ class RoomManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Nhà trọ kiểm thử')
             ->assertSee('Tầng 1')
-            ->assertSeeInOrder(['Phòng 105', 'Phòng 101'])
+            ->assertSeeInOrder(['Phòng 101', 'Phòng 105'])
             ->assertSee('Phòng trống')
             ->assertSee('floor-accordion')
-            ->assertSeeText('Xem phòng')
-            ->assertSee('chỉ là demo');
+            ->assertSeeText('Xem phòng');
     }
 
     public function test_room_settings_page_displays_current_configuration(): void
@@ -106,7 +105,7 @@ class RoomManagementTest extends TestCase
         $this->assertDatabaseHas('rooms', [
             'id' => $room->id,
             'status' => RoomStatus::Vacant->value,
-            'sort_order' => 7,
+            'sort_order' => 0,
             'note' => 'Phòng đang sửa',
             'is_active' => true,
         ]);
@@ -139,6 +138,7 @@ class RoomManagementTest extends TestCase
             'id' => $room->id,
             'status' => RoomStatus::Inactive->value,
             'is_active' => false,
+            'sort_order' => 0,
         ]);
         $this->assertDatabaseHas('room_settings', ['room_id' => $room->id]);
     }
@@ -178,6 +178,54 @@ class RoomManagementTest extends TestCase
             'room_id' => $room->id,
             'rent_amount' => 3_000_000,
         ]);
+    }
+
+    public function test_moving_a_room_to_an_earlier_walk_position_shifts_the_rooms_in_between(): void
+    {
+        $first = $this->createRoomWithSettings('101', 1);
+        $second = $this->createRoomWithSettings('102', 2);
+        $third = $this->createRoomWithSettings('103', 3);
+        $fourth = $this->createRoomWithSettings('104', 4);
+        $fifth = $this->createRoomWithSettings('105', 5);
+
+        $this->actingAs($this->admin)
+            ->put(route('rooms.settings.update', $fifth), $this->validPayload(['sort_order' => 2]))
+            ->assertRedirect();
+
+        $this->assertSame(1, $first->refresh()->sort_order);
+        $this->assertSame(2, $fifth->refresh()->sort_order);
+        $this->assertSame(3, $second->refresh()->sort_order);
+        $this->assertSame(4, $third->refresh()->sort_order);
+        $this->assertSame(5, $fourth->refresh()->sort_order);
+    }
+
+    public function test_vacant_room_has_no_walk_order_and_rejoining_appends_to_the_active_order(): void
+    {
+        $first = $this->createRoomWithSettings('101', 1);
+        $second = $this->createRoomWithSettings('102', 2);
+        $third = $this->createRoomWithSettings('103', 3);
+        $vacantPayload = $this->validPayload(['status' => RoomStatus::Vacant->value]);
+        unset($vacantPayload['sort_order']);
+
+        $this->actingAs($this->admin)
+            ->put(route('rooms.settings.update', $second), $vacantPayload)
+            ->assertRedirect();
+
+        $this->assertSame(1, $first->refresh()->sort_order);
+        $this->assertSame(0, $second->refresh()->sort_order);
+        $this->assertSame(2, $third->refresh()->sort_order);
+        $this->actingAs($this->admin)
+            ->get(route('rooms.settings.edit', $second))
+            ->assertOk()
+            ->assertSeeText('Phòng này không tham gia thứ tự đi thực tế.');
+
+        $rejoinPayload = $this->validPayload();
+        unset($rejoinPayload['sort_order']);
+        $this->actingAs($this->admin)
+            ->put(route('rooms.settings.update', $second), $rejoinPayload)
+            ->assertRedirect();
+
+        $this->assertSame(3, $second->refresh()->sort_order);
     }
 
     public function test_room_from_another_property_is_not_accessible(): void

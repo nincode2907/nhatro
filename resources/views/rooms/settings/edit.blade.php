@@ -3,6 +3,9 @@
 @section('title', 'Phòng '.$room->room_number.' — Cài đặt')
 
 @section('content')
+    @php
+        $usesWalkOrder = old('status', $room->status->value) === \App\Enums\RoomStatus::Occupied->value;
+    @endphp
     <nav class="breadcrumbs" aria-label="Điều hướng">
         <a href="{{ route('rooms.index') }}">← Danh sách phòng</a>
     </nav>
@@ -42,7 +45,7 @@
                 </div>
             </div>
 
-            <div class="form-grid two-columns">
+            <div class="form-grid two-columns" data-walk-order data-next-walk-order="{{ $nextWalkOrder }}">
                 <div class="field">
                     <label for="status">Trạng thái</label>
                     <select id="status" name="status" required>
@@ -55,11 +58,14 @@
                     @error('status')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
 
-                <div class="field">
+                <div class="field" data-walk-order-field @unless($usesWalkOrder) hidden @endunless>
                     <label for="sort_order">Thứ tự đi</label>
                     <input id="sort_order" name="sort_order" type="number" inputmode="numeric" min="1" step="1"
-                           value="{{ old('sort_order', $room->sort_order) }}" required>
-                    <p class="field-help">Thứ tự di chuyển thực tế, không nhất thiết theo số phòng.</p>
+                           value="{{ old('sort_order', $usesWalkOrder ? $room->sort_order : $nextWalkOrder) }}"
+                           @disabled(! $usesWalkOrder) @required($usesWalkOrder)>
+                    <p class="field-help" data-walk-order-help>
+                        {{ $usesWalkOrder ? 'Đổi vị trí sẽ tự đẩy các phòng ở giữa xuống một bậc.' : 'Phòng này không tham gia thứ tự đi thực tế.' }}
+                    </p>
                     @error('sort_order')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
             </div>

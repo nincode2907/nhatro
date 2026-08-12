@@ -48,7 +48,10 @@
                             <div>
                                 <strong>Phòng {{ $room->room_number }}</strong>
                                 <span class="structure-room-meta">
-                                    Thứ tự {{ $room->sort_order }} · {{ $room->status->label() }}
+                                    @if ($room->status->usesWalkOrder())
+                                        Thứ tự {{ $room->sort_order }} ·
+                                    @endif
+                                    {{ $room->status->label() }}
                                 </span>
                             </div>
                             <div class="structure-room-actions">

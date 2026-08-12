@@ -139,7 +139,7 @@ class PropertyStructureManagementTest extends TestCase
         $this->assertDatabaseHas('rooms', [
             'id' => $room->id,
             'floor_id' => $this->floor->id,
-            'sort_order' => 12,
+            'sort_order' => 1,
             'status' => RoomStatus::Occupied->value,
             'is_active' => true,
         ]);
@@ -177,7 +177,7 @@ class PropertyStructureManagementTest extends TestCase
             'id' => $room->id,
             'floor_id' => $secondFloor->id,
             'room_number' => '201A',
-            'sort_order' => 7,
+            'sort_order' => 0,
             'status' => RoomStatus::Inactive->value,
             'is_active' => false,
         ]);

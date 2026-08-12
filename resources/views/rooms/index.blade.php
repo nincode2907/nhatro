@@ -56,7 +56,9 @@
                                     </span>
                                 </div>
                                 <div class="room-actions">
-                                    <span class="sort-label">Thứ tự {{ $room->sort_order }}</span>
+                                    @if ($room->status->usesWalkOrder())
+                                        <span class="sort-label">Thứ tự {{ $room->sort_order }}</span>
+                                    @endif
                                     <a class="button button-secondary" href="{{ route('rooms.settings.edit', $room) }}">
                                         Cài đặt
                                     </a>
