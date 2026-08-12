@@ -34,6 +34,20 @@ RUN apk add --no-cache \
     && apk del .build-dependencies \
     && php -r 'exit(extension_loaded("pdo_sqlite") && extension_loaded("sqlite3") && extension_loaded("gd") && extension_loaded("zip") ? 0 : 1);'
 
+FROM node:22-alpine AS frontend-build
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm ci --no-audit --no-fund
+
+COPY vite.config.js ./
+COPY resources ./resources
+COPY public ./public
+
+RUN npm run build
+
 FROM php-base AS dependencies
 
 WORKDIR /app
@@ -50,6 +64,8 @@ RUN composer install \
     --prefer-dist
 
 COPY . .
+
+COPY --from=frontend-build /app/public/build ./public/build
 
 RUN composer dump-autoload \
     --classmap-authoritative \

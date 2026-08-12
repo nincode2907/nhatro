@@ -111,10 +111,11 @@ class DocxInvoiceExporter
         $table->addRow(420, ['tblHeader' => true]);
 
         foreach ([
-            ['Khoản thu', 3400],
-            ['Số lượng', 1500],
+            ['Khoản thu', 2400],
+            ['Số cũ', 1200],
+            ['Số mới', 1200],
             ['Đơn giá', 1800],
-            ['Thành tiền', 2000],
+            ['Thành tiền', 2100],
         ] as [$heading, $width]) {
             $table->addCell($width, ['bgColor' => '263B34', 'valign' => VerticalJc::CENTER])
                 ->addText($heading, ['bold' => true, 'color' => 'FFFFFF'], ['alignment' => Jc::CENTER]);
@@ -125,29 +126,34 @@ class DocxInvoiceExporter
             $table->addRow();
             $description = $row['label'];
 
-            if ($item?->metadata && isset($item->metadata['previous'], $item->metadata['current'])) {
-                $description .= sprintf(
-                    ' — Cũ %s → Mới %s',
-                    number_format($item->metadata['previous'], 0, ',', '.'),
-                    number_format($item->metadata['current'], 0, ',', '.'),
-                );
-            } elseif (! $item) {
-                $description .= ' — Không phát sinh';
+            if (! $item) {
+                $description .= ' - Không phát sinh';
             }
 
-            $table->addCell(3400)->addText($description, ['bold' => true]);
-            $table->addCell(1500)->addText(
-                $item ? number_format($item->quantity, 0, ',', '.').' '.$item->unit : '—',
+            $table->addCell(2400)->addText($description, ['bold' => true]);
+            $table->addCell(1200)->addText(
+                $item && $row['type']->isMetered()
+                    ? number_format($item->metadata['previous'], 0, ',', '.')
+                    : '',
+                null,
+                ['alignment' => Jc::RIGHT],
+            );
+            $table->addCell(1200)->addText(
+                $item && $row['type']->isMetered()
+                    ? number_format($item->metadata['current'], 0, ',', '.')
+                    : '',
                 null,
                 ['alignment' => Jc::RIGHT],
             );
             $table->addCell(1800)->addText(
-                $item ? number_format($item->unit_price, 0, ',', '.').' đ' : '—',
+                $item && $row['type']->isMetered()
+                    ? number_format($item->unit_price, 0, ',', '.').' đ'
+                    : '',
                 null,
                 ['alignment' => Jc::RIGHT],
             );
-            $table->addCell(2000)->addText(
-                $item ? number_format($item->amount, 0, ',', '.').' đ' : '—',
+            $table->addCell(2100)->addText(
+                $item ? number_format($item->amount, 0, ',', '.').' đ' : '-',
                 ['bold' => true],
                 ['alignment' => Jc::RIGHT],
             );
@@ -164,6 +170,12 @@ class DocxInvoiceExporter
                 ['bold' => true, 'color' => 'FFFFFF', 'size' => 18],
                 ['alignment' => Jc::RIGHT],
             );
+
+        $section->addText(
+            'Số tiền bằng chữ: '.$record->document->totalInWords(),
+            ['size' => 9],
+            ['spaceBefore' => 80, 'spaceAfter' => 40],
+        );
 
         $section->addText(
             'Ghi chú: '.($record->note() ?: 'Không có'),

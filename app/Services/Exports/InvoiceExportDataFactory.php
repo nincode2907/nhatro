@@ -7,10 +7,27 @@ use App\Data\Exports\InvoiceExportRecord;
 use App\Models\BillingPeriod;
 use App\Models\Invoice;
 use App\Models\MeterReading;
+use Illuminate\Support\Collection;
 
 class InvoiceExportDataFactory
 {
     public function forPeriod(BillingPeriod $period): InvoiceExportDataset
+    {
+        $period->loadMissing('property');
+        $previousPeriod = $period->property->billingPeriods()
+            ->where('period_key', $period->starts_on->copy()->subMonthNoOverflow()->format('Y-m'))
+            ->first();
+
+        return new InvoiceExportDataset(
+            $period,
+            $this->recordsForPeriod($period),
+            $previousPeriod,
+            $previousPeriod ? $this->recordsForPeriod($previousPeriod) : collect(),
+        );
+    }
+
+    /** @return Collection<int, InvoiceExportRecord> */
+    private function recordsForPeriod(BillingPeriod $period): Collection
     {
         $period->loadMissing('property');
         $invoices = $period->invoices()
@@ -34,7 +51,7 @@ class InvoiceExportDataFactory
             ),
         );
 
-        return new InvoiceExportDataset($period, $records);
+        return $records;
     }
 
     public function forInvoice(Invoice $invoice): InvoiceExportRecord

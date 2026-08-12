@@ -80,15 +80,16 @@ class InvoicePrintRenderingTest extends TestCase
             ->assertSeeText('Tháng 08/2026')
             ->assertSeeText('Phòng')
             ->assertSeeText('101')
-            ->assertSeeText('Cũ 14.000')
-            ->assertSeeText('Mới 14.217')
-            ->assertSeeText('217 kWh')
+            ->assertSeeText('Số cũ')
+            ->assertSeeText('Số mới')
+            ->assertSeeText('Đơn giá')
+            ->assertSeeText('14.000')
+            ->assertSeeText('14.217')
             ->assertSeeText('3.200 đ')
-            ->assertSeeText('694.400 đ')
-            ->assertSeeText('Cũ 343')
-            ->assertSeeText('Mới 347')
-            ->assertSeeText('4 m³')
             ->assertSeeText('17.000 đ')
+            ->assertSeeText('694.400 đ')
+            ->assertSeeText('343')
+            ->assertSeeText('347')
             ->assertSeeText('68.000 đ')
             ->assertSeeText('Tiền phòng')
             ->assertSeeText('Xe')
@@ -97,12 +98,18 @@ class InvoicePrintRenderingTest extends TestCase
             ->assertSeeText('Khoản khác')
             ->assertSeeText('Không phát sinh')
             ->assertSeeText('4.112.400 đ')
+            ->assertSeeText('Số tiền bằng chữ: Bốn triệu một trăm mười hai nghìn bốn trăm đồng.')
             ->assertSeeText('Thu tiền trong tháng')
             ->assertSeeText('Người thu')
             ->assertSeeText('Người thuê')
+            ->assertDontSeeText('Số lượng')
             ->assertDontSee('site-header', false);
 
         $this->assertSame(1, substr_count($response->getContent(), 'invoice-paper--single'));
+        $this->assertSame(
+            5,
+            preg_match_all('/<td class="invoice-unit-price">\s*<\/td>/', $response->getContent()),
+        );
     }
 
     public function test_batch_print_groups_exactly_three_invoices_per_a4_sheet_in_walk_order(): void
@@ -149,6 +156,7 @@ class InvoicePrintRenderingTest extends TestCase
 
         $this->assertStringContainsString('.invoice-room-number', $commonCss);
         $this->assertStringContainsString('.invoice-paper-total', $commonCss);
+        $this->assertStringContainsString('.invoice-total-words', $commonCss);
         $this->assertStringContainsString('display: none !important', $commonCss);
         $this->assertStringContainsString('size: A5 portrait', $a5Css);
         $this->assertStringContainsString('size: A4 portrait', $batchCss);

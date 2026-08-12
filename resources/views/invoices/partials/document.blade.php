@@ -26,10 +26,18 @@
     </div>
 
     <table class="invoice-line-table">
+        <colgroup>
+            <col class="invoice-col-description">
+            <col class="invoice-col-reading">
+            <col class="invoice-col-reading">
+            <col class="invoice-col-unit-price">
+            <col class="invoice-col-amount">
+        </colgroup>
         <thead>
             <tr>
                 <th scope="col">Khoản thu</th>
-                <th scope="col">Số lượng</th>
+                <th scope="col">Số cũ</th>
+                <th scope="col">Số mới</th>
                 <th scope="col">Đơn giá</th>
                 <th scope="col">Thành tiền</th>
             </tr>
@@ -40,29 +48,18 @@
                 <tr class="@if($row['type']->isMetered()) is-metered @endif @if(! $item) is-empty @endif">
                     <th scope="row">
                         <strong>{{ $row['label'] }}</strong>
-                        @if ($item?->metadata && isset($item->metadata['previous'], $item->metadata['current']))
-                            <span class="meter-reading-pair">
-                                <span>Cũ <b>{{ number_format($item->metadata['previous'], 0, ',', '.') }}</b></span>
-                                <span aria-hidden="true">→</span>
-                                <span>Mới <b>{{ number_format($item->metadata['current'], 0, ',', '.') }}</b></span>
-                            </span>
-                        @elseif (! $item)
+                        @if (! $item)
                             <span class="invoice-no-charge">Không phát sinh</span>
                         @endif
                     </th>
-                    <td>
-                        @if ($item)
-                            {{ number_format($item->quantity, 0, ',', '.') }} {{ $item->unit }}
-                        @else
-                            —
-                        @endif
+                    <td class="invoice-meter-value">
+                        {{ $item && $row['type']->isMetered() ? number_format($item->metadata['previous'], 0, ',', '.') : '' }}
                     </td>
-                    <td>
-                        @if ($item)
-                            {{ number_format($item->unit_price, 0, ',', '.') }} đ
-                        @else
-                            —
-                        @endif
+                    <td class="invoice-meter-value">
+                        {{ $item && $row['type']->isMetered() ? number_format($item->metadata['current'], 0, ',', '.') : '' }}
+                    </td>
+                    <td class="invoice-unit-price">
+                        {{ $item && $row['type']->isMetered() ? number_format($item->unit_price, 0, ',', '.').' đ' : '' }}
                     </td>
                     <td class="invoice-line-amount">
                         @if ($item)
@@ -80,6 +77,10 @@
         <span>Tổng cộng</span>
         <strong>{{ number_format($invoice->total, 0, ',', '.') }} đ</strong>
     </div>
+
+    <p class="invoice-total-words">
+        <strong>Số tiền bằng chữ:</strong> {{ $document->totalInWords() }}
+    </p>
 
     <div class="invoice-paper-note">
         <strong>Ghi chú:</strong>

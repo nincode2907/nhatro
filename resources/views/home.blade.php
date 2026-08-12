@@ -6,7 +6,7 @@
     <section class="hero" aria-labelledby="home-title">
         <p class="eyebrow">Hệ thống nội bộ</p>
         <h1 id="home-title">{{ config('app.name') }}</h1>
-        <p class="hero-copy">Ghi chỉ số điện nước theo đúng thứ tự đi, ngay trên điện thoại.</p>
+        <p class="hero-copy">Ghi chỉ số điện nước trên điện thoại, quá trình còn lại tự động.</p>
     </section>
 
     <section class="status-grid" aria-label="Trạng thái khởi tạo">
@@ -29,8 +29,4 @@
         </article>
     </section>
 
-    <div class="notice" role="status">
-        <strong>Dữ liệu khởi tạo là dữ liệu demo.</strong>
-        Hãy xác minh số phòng, thứ tự và giá thực tế trước khi sử dụng.
-    </div>
 @endsection

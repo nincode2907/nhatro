@@ -11,7 +11,7 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
-      APP_NAME: "${PROPERTY_NAME:-Nhà trọ 441}"
+      APP_NAME: "${PROPERTY_NAME:-Nhà trọ 441 BPL}"
       APP_ENV: local
       APP_KEY: "${DOCKER_APP_KEY:-}"
       APP_DEBUG: "false"
@@ -38,12 +38,26 @@ services:
       ADMIN_USERNAME: "${ADMIN_USERNAME:-admin}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.docker before starting Docker}"
       PROPERTY_CODE: "${PROPERTY_CODE:-441}"
-      PROPERTY_NAME: "${PROPERTY_NAME:-Nhà trọ 441}"
+      PROPERTY_NAME: "${PROPERTY_NAME:-Nhà trọ 441 BPL}"
       PROPERTY_ADDRESS: "${PROPERTY_ADDRESS:-}"
     volumes:
       - app-data:/data
       - app-storage:/var/www/html/storage
 
+  frontend:
+    image: node:22-alpine
+    profiles: ["dev"]
+    working_dir: /var/www/html
+    init: true
+    ports:
+      - "${VITE_PORT:-5173}:5173"
+    command: >
+      sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0"
+    volumes:
+      - .:/var/www/html
+      - frontend-node-modules:/var/www/html/node_modules
+
 volumes:
   app-data:
   app-storage:
+  frontend-node-modules:

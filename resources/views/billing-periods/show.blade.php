@@ -85,4 +85,19 @@
             <div class="card empty-state">Chưa có tầng nào.</div>
         @endforelse
     </section>
+
+    @if ($period->canResetReadings())
+        <section class="card danger-zone" aria-labelledby="reset-readings-title">
+            <div>
+                <h2 id="reset-readings-title">Xóa dữ liệu ghi thử</h2>
+                <p>Xóa toàn bộ chỉ số và hóa đơn của {{ $period->label() }} để ghi lại từ đầu. Phòng và cấu hình giá vẫn được giữ nguyên.</p>
+            </div>
+            <form method="POST" action="{{ route('billing-periods.readings.destroy', $period) }}"
+                  data-confirm-message="Xóa toàn bộ chỉ số và hóa đơn nháp của {{ $period->label() }}? Thao tác này không thể hoàn tác.">
+                @csrf
+                @method('DELETE')
+                <button class="button button-danger" type="submit">Xóa bản ghi tháng này</button>
+            </form>
+        </section>
+    @endif
 @endsection

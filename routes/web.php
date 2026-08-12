@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function (): void {
         ->name('billing-periods.store');
     Route::get('/billing-periods/{period}', [BillingPeriodController::class, 'show'])
         ->name('billing-periods.show');
+    Route::delete('/billing-periods/{period}/readings', [BillingPeriodController::class, 'destroyReadings'])
+        ->name('billing-periods.readings.destroy');
     Route::get('/billing-periods/{period}/invoices', [InvoiceController::class, 'index'])
         ->name('invoices.index');
     Route::get('/billing-periods/{period}/invoices/print', [InvoiceController::class, 'printBatch'])

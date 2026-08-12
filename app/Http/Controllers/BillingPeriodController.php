@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\MeterReadings\ReadingFlow;
+use App\Actions\MeterReadings\ResetBillingPeriodReadings;
 use App\Enums\BillingPeriodStatus;
 use App\Http\Requests\BillingPeriods\StoreBillingPeriodRequest;
 use App\Models\BillingPeriod;
@@ -84,6 +85,23 @@ class BillingPeriodController extends Controller
         $invoiceCount = $period->invoices()->count();
 
         return view('billing-periods.show', compact('period', 'periods', 'floorSummaries', 'invoiceCount'));
+    }
+
+    public function destroyReadings(
+        BillingPeriod $period,
+        ResetBillingPeriodReadings $resetReadings,
+    ): RedirectResponse {
+        $this->ensureConfiguredPeriod($period);
+        abort_unless($period->canResetReadings(), 403);
+
+        $deleted = $resetReadings->handle($period);
+
+        return redirect()
+            ->route('billing-periods.show', $period)
+            ->with(
+                'status',
+                "Đã xóa {$deleted['readings']} bản ghi chỉ số và {$deleted['invoices']} hóa đơn nháp. Bạn có thể ghi lại từ đầu.",
+            );
     }
 
     private function configuredProperty(): ?Property

@@ -1,0 +1,14 @@
+services:
+  app:
+    environment:
+      APP_DEBUG: "true"
+    volumes:
+      # Mount mã nguồn có thể thay đổi, nhưng vẫn dùng vendor đã được cài trong image.
+      - ./app:/var/www/html/app
+      - ./bootstrap/app.php:/var/www/html/bootstrap/app.php:ro
+      - ./config:/var/www/html/config
+      - ./database:/var/www/html/database
+      - ./public:/var/www/html/public
+      - ./resources:/var/www/html/resources
+      - ./routes:/var/www/html/routes
+      - ./artisan:/var/www/html/artisan:ro

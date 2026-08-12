@@ -66,16 +66,10 @@ class XlsxInvoiceExporter
             }
 
             $lastDataRow = $row - 1;
-            $summaryRow = $row + 1;
-            $sheet->mergeCells("A{$summaryRow}:Q{$summaryRow}");
-            $sheet->setCellValue("A{$summaryRow}", 'TỔNG THÁNG');
-            $sheet->setCellValueExplicit(
-                "R{$summaryRow}",
-                $dataset->grandTotal(),
-                DataType::TYPE_NUMERIC,
-            );
+            $summaryHeaderRow = $row + 1;
+            $summaryEndRow = $this->writeSummary($sheet, $summaryHeaderRow, $dataset);
 
-            $this->styleSheet($sheet, $lastDataRow, $summaryRow);
+            $this->styleSheet($sheet, $lastDataRow, $summaryHeaderRow, $summaryEndRow, $dataset);
 
             return ExportBuffer::capture(
                 fn (string $path) => (new Xlsx($spreadsheet))->save($path),
@@ -83,6 +77,66 @@ class XlsxInvoiceExporter
         } finally {
             $spreadsheet->disconnectWorksheets();
         }
+    }
+
+    private function writeSummary(
+        Worksheet $sheet,
+        int $headerRow,
+        InvoiceExportDataset $dataset,
+    ): int {
+        $sheet->mergeCells("A{$headerRow}:B{$headerRow}");
+        $sheet->setCellValue("A{$headerRow}", 'TỔNG HỢP');
+        $sheet->setCellValue("C{$headerRow}", $dataset->period->label());
+        $sheet->mergeCells("D{$headerRow}:H{$headerRow}");
+        $sheet->setCellValue(
+            "D{$headerRow}",
+            $dataset->previousPeriod
+                ? 'So với '.$dataset->previousPeriod->label()
+                : 'So với tháng trước',
+        );
+
+        $summaryRows = [
+            ['TỔNG TIỀN PHÒNG', InvoiceItemType::Rent],
+            ['TỔNG TIỀN ĐIỆN', InvoiceItemType::Electricity],
+            ['TỔNG TIỀN NƯỚC', InvoiceItemType::Water],
+            ['TỔNG TIỀN XE', InvoiceItemType::Vehicle],
+            ['TỔNG TIỀN RÁC', InvoiceItemType::Garbage],
+            ['TỔNG TIỀN CÁP / INTERNET', InvoiceItemType::Cable],
+            ['TỔNG KHOẢN KHÁC', InvoiceItemType::Other],
+            ['TỔNG CỘNG', null],
+        ];
+
+        foreach ($summaryRows as $offset => [$label, $type]) {
+            $row = $headerRow + $offset + 1;
+            $current = $type ? $dataset->totalFor($type) : $dataset->grandTotal();
+            $previous = $type ? $dataset->previousTotalFor($type) : $dataset->previousGrandTotal();
+
+            $sheet->mergeCells("A{$row}:B{$row}");
+            $sheet->setCellValue("A{$row}", $label);
+            $sheet->setCellValueExplicit("C{$row}", $current, DataType::TYPE_NUMERIC);
+            $sheet->mergeCells("D{$row}:H{$row}");
+
+            if ($dataset->previousPeriod) {
+                $difference = $current - $previous;
+                if ($difference === 0) {
+                    $sheet->setCellValue("D{$row}", '→ 0 đ so với tháng trước');
+                } else {
+                    $sheet->setCellValueExplicit("D{$row}", $difference, DataType::TYPE_NUMERIC);
+                }
+                $sheet->getStyle("D{$row}")
+                    ->getFont()
+                    ->getColor()
+                    ->setRGB(match (true) {
+                        $difference > 0 => '008000',
+                        $difference < 0 => 'C00000',
+                        default => '60706A',
+                    });
+            } else {
+                $sheet->setCellValue("D{$row}", 'Chưa có dữ liệu tháng trước');
+            }
+        }
+
+        return $headerRow + count($summaryRows);
     }
 
     private function writeRecord(Worksheet $sheet, int $row, InvoiceExportRecord $record): void
@@ -120,8 +174,13 @@ class XlsxInvoiceExporter
         }
     }
 
-    private function styleSheet(Worksheet $sheet, int $lastDataRow, int $summaryRow): void
-    {
+    private function styleSheet(
+        Worksheet $sheet,
+        int $lastDataRow,
+        int $summaryHeaderRow,
+        int $summaryEndRow,
+        InvoiceExportDataset $dataset,
+    ): void {
         $sheet->freezePane('A5');
         $sheet->getPageSetup()
             ->setOrientation(PageSetup::ORIENTATION_LANDSCAPE)
@@ -176,14 +235,53 @@ class XlsxInvoiceExporter
             }
         }
 
-        $sheet->getStyle("A{$summaryRow}:R{$summaryRow}")->applyFromArray([
+        $sheet->getStyle("A{$summaryHeaderRow}:H{$summaryHeaderRow}")->applyFromArray([
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '263B34']],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+        $sheet->getRowDimension($summaryHeaderRow)->setRowHeight(24);
+
+        $summaryStartRow = $summaryHeaderRow + 1;
+        $sheet->getStyle("A{$summaryStartRow}:H{$summaryEndRow}")->applyFromArray([
+            'borders' => [
+                'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D5DDD9']],
+            ],
+        ]);
+        $sheet->getStyle("A{$summaryStartRow}:A{$summaryEndRow}")->getFont()->setBold(true);
+        $sheet->getStyle("C{$summaryStartRow}:C{$summaryEndRow}")
+            ->getNumberFormat()
+            ->setFormatCode('#,##0 "đ"');
+        $sheet->getStyle("C{$summaryStartRow}:C{$summaryEndRow}")
+            ->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle("D{$summaryStartRow}:D{$summaryEndRow}")
+            ->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        if ($dataset->previousPeriod) {
+            $sheet->getStyle("D{$summaryStartRow}:D{$summaryEndRow}")
+                ->getNumberFormat()
+                ->setFormatCode(
+                    '"↑ "#,##0" đ so với tháng trước";"↓ "#,##0" đ so với tháng trước"',
+                );
+        } else {
+            $sheet->getStyle("D{$summaryStartRow}:D{$summaryEndRow}")
+                ->getFont()
+                ->getColor()
+                ->setRGB('60706A');
+        }
+
+        $sheet->getStyle("A{$summaryEndRow}:H{$summaryEndRow}")->applyFromArray([
             'font' => ['bold' => true, 'size' => 12],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'DFF3EB']],
             'borders' => [
                 'top' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['rgb' => '116149']],
             ],
         ]);
-        $sheet->getStyle("R{$summaryRow}")->getNumberFormat()->setFormatCode('#,##0 "đ"');
 
         foreach ([
             'A' => 10,

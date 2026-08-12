@@ -67,6 +67,23 @@ class InvoiceExportTest extends TestCase
     public function test_xlsx_contains_snapshot_values_monthly_columns_and_no_formulas(): void
     {
         $invoice = $this->createInvoice('101', 1);
+        $previousPeriod = BillingPeriod::factory()->for($this->property)->create([
+            'period_key' => '2026-07',
+            'starts_on' => '2026-07-01',
+            'ends_on' => '2026-07-31',
+        ]);
+        $previousReading = MeterReading::factory()
+            ->for($previousPeriod)
+            ->for($invoice->room)
+            ->recorded(
+                electricityPrevious: 13_900,
+                electricityCurrent: 14_000,
+                waterPrevious: 337,
+                waterCurrent: 343,
+            )
+            ->create();
+        $this->app->make(InvoiceCalculator::class)
+            ->recalculateDraft($previousPeriod, $invoice->room, $previousReading);
         $invoice->room->settings->update([
             'rent_amount' => 9_000_000,
             'electricity_unit_price' => 9_999,
@@ -109,13 +126,54 @@ class InvoiceExportTest extends TestCase
         $this->assertSame(4_217_400, $sheet->getCell('R5')->getValue());
         $this->assertSame('Đã ghi', $sheet->getCell('S5')->getValue());
         $this->assertSame('Kiểm tra đồng hồ', $sheet->getCell('T5')->getValue());
-        $this->assertSame('TỔNG THÁNG', $sheet->getCell('A7')->getValue());
-        $this->assertSame(4_217_400, $sheet->getCell('R7')->getValue());
+        $this->assertSame('TỔNG HỢP', $sheet->getCell('A7')->getValue());
+        $this->assertSame('Tháng 08/2026', $sheet->getCell('C7')->getValue());
+        $this->assertSame('So với Tháng 07/2026', $sheet->getCell('D7')->getValue());
+        $this->assertSame('TỔNG TIỀN PHÒNG', $sheet->getCell('A8')->getValue());
+        $this->assertSame(3_200_000, $sheet->getCell('C8')->getValue());
+        $this->assertSame('→ 0 đ so với tháng trước', $sheet->getCell('D8')->getValue());
+        $this->assertSame('TỔNG TIỀN ĐIỆN', $sheet->getCell('A9')->getValue());
+        $this->assertSame(694_400, $sheet->getCell('C9')->getValue());
+        $this->assertSame(374_400, $sheet->getCell('D9')->getValue());
+        $this->assertSame('TỔNG TIỀN NƯỚC', $sheet->getCell('A10')->getValue());
+        $this->assertSame(68_000, $sheet->getCell('C10')->getValue());
+        $this->assertSame(-34_000, $sheet->getCell('D10')->getValue());
+        $this->assertSame('TỔNG CỘNG', $sheet->getCell('A15')->getValue());
+        $this->assertSame(4_217_400, $sheet->getCell('C15')->getValue());
+        $this->assertSame(340_400, $sheet->getCell('D15')->getValue());
+        $this->assertStringContainsString('"↑ "', $sheet->getStyle('D9')->getNumberFormat()->getFormatCode());
+        $this->assertStringContainsString('"↓ "', $sheet->getStyle('D9')->getNumberFormat()->getFormatCode());
+        $this->assertSame('008000', $sheet->getStyle('D9')->getFont()->getColor()->getRGB());
+        $this->assertSame('C00000', $sheet->getStyle('D10')->getFont()->getColor()->getRGB());
+        $this->assertSame('60706A', $sheet->getStyle('D8')->getFont()->getColor()->getRGB());
 
         foreach ($sheet->getCellCollection()->getCoordinates() as $coordinate) {
             $value = $sheet->getCell($coordinate)->getValue();
             $this->assertFalse(is_string($value) && str_starts_with($value, '='));
         }
+
+        $spreadsheet->disconnectWorksheets();
+    }
+
+    public function test_xlsx_marks_month_comparison_unavailable_without_the_immediately_previous_period(): void
+    {
+        $this->createInvoice('101', 1);
+        BillingPeriod::factory()->for($this->property)->create([
+            'period_key' => '2026-06',
+            'starts_on' => '2026-06-01',
+            'ends_on' => '2026-06-30',
+        ]);
+
+        $response = $this->actingAs(User::factory()->create())
+            ->get(route('invoice-exports.xlsx', $this->period))
+            ->assertOk();
+
+        $spreadsheet = $this->loadSpreadsheet($response->getContent());
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $this->assertSame('So với tháng trước', $sheet->getCell('D7')->getValue());
+        $this->assertSame('Chưa có dữ liệu tháng trước', $sheet->getCell('D8')->getValue());
+        $this->assertSame('Chưa có dữ liệu tháng trước', $sheet->getCell('D15')->getValue());
 
         $spreadsheet->disconnectWorksheets();
     }
@@ -172,8 +230,19 @@ class InvoiceExportTest extends TestCase
         $this->assertStringStartsWith('PK', $single);
         $this->assertStringContainsString('NHÀ TRỌ KIỂM THỬ', $singleXml);
         $this->assertStringContainsString('PHÒNG 101', $singleXml);
-        $this->assertStringContainsString('Cũ 14.000 → Mới 14.217', $singleXml);
+        $this->assertStringContainsString('Số cũ', $singleXml);
+        $this->assertStringContainsString('Số mới', $singleXml);
+        $this->assertStringContainsString('Đơn giá', $singleXml);
+        $this->assertStringContainsString('14.000', $singleXml);
+        $this->assertStringContainsString('14.217', $singleXml);
+        $this->assertStringContainsString('3.200 đ', $singleXml);
+        $this->assertStringContainsString('17.000 đ', $singleXml);
         $this->assertStringContainsString('4.217.400 đ', $singleXml);
+        $this->assertStringContainsString(
+            'Số tiền bằng chữ: Bốn triệu hai trăm mười bảy nghìn bốn trăm đồng.',
+            $singleXml,
+        );
+        $this->assertStringNotContainsString('Số lượng', $singleXml);
         $this->assertStringContainsString('Kiểm tra đồng hồ', $singleXml);
         $this->assertStringContainsString('PHÒNG 101', $batchXml);
         $this->assertStringContainsString('PHÒNG 102', $batchXml);

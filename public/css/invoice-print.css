@@ -185,21 +185,24 @@
     text-transform: uppercase;
 }
 
-.invoice-line-table th:first-child {
-    width: 38%;
-    text-align: left;
+.invoice-col-description {
+    width: 26%;
 }
 
-.invoice-line-table th:nth-child(2) {
-    width: 19%;
+.invoice-col-reading {
+    width: 13%;
 }
 
-.invoice-line-table th:nth-child(3) {
+.invoice-col-unit-price {
     width: 20%;
 }
 
-.invoice-line-table th:nth-child(4) {
-    width: 23%;
+.invoice-col-amount {
+    width: 28%;
+}
+
+.invoice-line-table th:first-child {
+    text-align: left;
 }
 
 .invoice-line-table td:not(:first-child),
@@ -212,17 +215,9 @@
     font-size: 1.03em;
 }
 
-.meter-reading-pair {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.25rem;
-    margin-top: 0.18rem;
-    font-size: 0.82em;
-    font-weight: 400;
-}
-
-.meter-reading-pair b {
+.invoice-meter-value,
+.invoice-unit-price {
+    white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
 
@@ -264,10 +259,18 @@
 }
 
 .invoice-paper-total strong {
+    max-width: 70%;
     white-space: nowrap;
     font-size: 2.1em;
     font-variant-numeric: tabular-nums;
     line-height: 1;
+}
+
+.invoice-total-words {
+    margin: 0;
+    padding: 0.52rem 0 0;
+    font-size: 0.84em;
+    line-height: 1.4;
 }
 
 .invoice-paper-note {
@@ -357,6 +360,10 @@
     .invoice-line-table th,
     .invoice-line-table td {
         padding-inline: 0.25rem;
+    }
+
+    .invoice-paper-total strong {
+        font-size: 1.75em;
     }
 
     .invoice-room-number {

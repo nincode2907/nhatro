@@ -209,10 +209,16 @@ class InvoiceBillingTest extends TestCase
             ->get(route('invoices.show', [$this->period, $invoice]))
             ->assertOk()
             ->assertSeeText('Phòng 101')
-            ->assertSeeText('Cũ 14.000')
-            ->assertSeeText('Mới 14.217')
+            ->assertSeeText('Số cũ')
+            ->assertSeeText('Số mới')
+            ->assertSeeText('Đơn giá')
+            ->assertSeeText('14.000')
+            ->assertSeeText('14.217')
+            ->assertSeeText('3.200 đ')
+            ->assertSeeText('17.000 đ')
             ->assertSeeText('694.400 đ')
-            ->assertSeeText('4.187.400 đ');
+            ->assertSeeText('4.187.400 đ')
+            ->assertSeeText('Bốn triệu một trăm tám mươi bảy nghìn bốn trăm đồng.');
     }
 
     public function test_room_has_only_one_invoice_per_period(): void

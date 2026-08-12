@@ -32,10 +32,18 @@
     </table>
 
     <table class="pdf-lines">
+        <colgroup>
+            <col style="width: 26%">
+            <col style="width: 13%">
+            <col style="width: 13%">
+            <col style="width: 20%">
+            <col style="width: 28%">
+        </colgroup>
         <thead>
             <tr>
                 <th>Khoản thu</th>
-                <th>Số lượng</th>
+                <th>Số cũ</th>
+                <th>Số mới</th>
                 <th>Đơn giá</th>
                 <th>Thành tiền</th>
             </tr>
@@ -46,18 +54,14 @@
                 <tr>
                     <th>
                         {{ $row['label'] }}
-                        @if ($item?->metadata && isset($item->metadata['previous'], $item->metadata['current']))
-                            <span class="pdf-meter">
-                                Cũ {{ number_format($item->metadata['previous'], 0, ',', '.') }}
-                                → Mới {{ number_format($item->metadata['current'], 0, ',', '.') }}
-                            </span>
-                        @elseif (! $item)
+                        @if (! $item)
                             <span class="pdf-muted">Không phát sinh</span>
                         @endif
                     </th>
-                    <td>{{ $item ? number_format($item->quantity, 0, ',', '.').' '.$item->unit : '—' }}</td>
-                    <td>{{ $item ? number_format($item->unit_price, 0, ',', '.').' đ' : '—' }}</td>
-                    <td class="pdf-amount">{{ $item ? number_format($item->amount, 0, ',', '.').' đ' : '—' }}</td>
+                    <td class="pdf-reading">{{ $item && $row['type']->isMetered() ? number_format($item->metadata['previous'], 0, ',', '.') : '' }}</td>
+                    <td class="pdf-reading">{{ $item && $row['type']->isMetered() ? number_format($item->metadata['current'], 0, ',', '.') : '' }}</td>
+                    <td class="pdf-unit-price">{{ $item && $row['type']->isMetered() ? number_format($item->unit_price, 0, ',', '.').' đ' : '' }}</td>
+                    <td class="pdf-amount">{{ $item ? number_format($item->amount, 0, ',', '.').' đ' : '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -69,6 +73,8 @@
             <td class="pdf-total-amount">{{ number_format($invoice->total, 0, ',', '.') }} đ</td>
         </tr>
     </table>
+
+    <div class="pdf-total-words"><strong>Số tiền bằng chữ:</strong> {{ $record->document->totalInWords() }}</div>
 
     <div class="pdf-note"><strong>Ghi chú:</strong> {{ $record->note() ?: 'Không có' }}</div>
 

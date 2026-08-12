@@ -5,6 +5,7 @@ namespace App\ViewModels;
 use App\Enums\InvoiceItemType;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Support\VietnameseMoneyWords;
 
 class InvoiceDocument
 {
@@ -33,5 +34,10 @@ class InvoiceDocument
         return $this->invoice->items->first(
             fn (InvoiceItem $item): bool => $item->type === $type,
         );
+    }
+
+    public function totalInWords(): string
+    {
+        return app(VietnameseMoneyWords::class)->convert($this->invoice->total);
     }
 }

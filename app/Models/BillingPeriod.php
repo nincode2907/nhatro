@@ -67,4 +67,14 @@ class BillingPeriod extends Model
     {
         return $this->status === BillingPeriodStatus::Open;
     }
+
+    public function isCurrentMonth(): bool
+    {
+        return $this->period_key === now()->format('Y-m');
+    }
+
+    public function canResetReadings(): bool
+    {
+        return $this->isOpen() && $this->isCurrentMonth();
+    }
 }

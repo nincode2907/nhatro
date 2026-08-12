@@ -55,6 +55,52 @@ Khi source code thay đổi, rebuild image:
 docker compose --env-file .env.docker up -d --build
 ```
 
+### Build giao diện trong Docker
+
+Image ứng dụng tự chạy `npm run build` trong một Docker build stage. Node.js không có trong container `app`, nên không chạy `npm` bằng `docker compose exec app`.
+
+Để chạy Vite ở chế độ phát triển hoàn toàn trong Docker, khởi động thêm service `frontend`:
+
+```bash
+docker compose --env-file .env.docker --profile dev up -d --build
+```
+
+Theo dõi log Vite:
+
+```bash
+docker compose --env-file .env.docker logs -f frontend
+```
+
+Service này mở Vite tại `http://127.0.0.1:5173`. Khi đang chạy, nếu cần gọi lệnh npm thủ công thì dùng:
+
+```bash
+docker compose --env-file .env.docker run --rm frontend npm run build
+```
+
+Không cần và không nên chạy `npm` bên trong container `app`.
+
+### Chế độ development — sửa code không cần rebuild
+
+Khi đang sửa PHP, Blade, CSS hoặc route thường xuyên, chạy một lần ở chế độ development:
+
+```bash
+docker compose -f compose.yaml -f compose.dev.yaml --profile dev up -d --build
+```
+
+`compose.dev.yaml` mount trực tiếp các thư mục mã nguồn vào container PHP. Sau khi lệnh trên chạy xong:
+
+- sửa PHP, Blade, route hoặc CSS trong `public/` → chỉ cần refresh trình duyệt;
+- sửa CSS/JS trong `resources/` → Vite tự theo dõi và cập nhật;
+- thay đổi `composer.json`, `package.json`, Dockerfile hoặc dependency → chạy lại lệnh có `--build`.
+
+Khi muốn khởi động lại development mà không cần build image, dùng:
+
+```bash
+docker compose -f compose.yaml -f compose.dev.yaml --profile dev up -d
+```
+
+Chế độ mặc định không dùng `compose.dev.yaml` vẫn là production-like: source được copy vào image và phù hợp để chạy ổn định.
+
 SQLite và khóa ứng dụng nằm trong volume `nhatro-441_app-data`; storage nằm trong `nhatro-441_app-storage`. Lệnh `stop`, `down`, restart hoặc rebuild image không xóa các volume này.
 
 > Không chạy `docker compose down -v` trừ khi muốn xóa toàn bộ database và khóa ứng dụng. Thao tác này không thể hoàn tác nếu không có backup.

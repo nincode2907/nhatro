@@ -28,10 +28,6 @@
             <code>php artisan db:seed --class=DemoPropertySeeder</code>
         </div>
     @else
-        <div class="notice notice-warning">
-            <strong>Lưu ý:</strong> danh sách seed ban đầu chỉ là demo. Hãy xác minh từng phòng và mức giá.
-        </div>
-
         <div class="floor-list">
             @forelse ($property->floors as $floor)
                 <details class="card floor-card floor-accordion">
