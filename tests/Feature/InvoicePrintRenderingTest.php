@@ -160,6 +160,7 @@ class InvoicePrintRenderingTest extends TestCase
         $this->assertStringContainsString('display: none !important', $commonCss);
         $this->assertStringContainsString('size: A5 portrait', $a5Css);
         $this->assertStringContainsString('size: A4 portrait', $batchCss);
+        $this->assertStringContainsString('align-items: center', $batchCss);
         $this->assertStringContainsString('grid-template-rows: repeat(3', $batchCss);
         $this->assertStringContainsString('page-break-after: always', $batchCss);
     }
