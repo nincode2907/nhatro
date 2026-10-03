@@ -9,13 +9,13 @@ services:
     init: true
     restart: unless-stopped
     ports:
-      - "${APP_BIND_IP:-127.0.0.1}:${APP_PORT:-8000}:8000"
+      - "${APP_BIND_IP:-127.0.0.1}:${APP_PORT:-9000}:8000"
     environment:
       APP_NAME: "${PROPERTY_NAME:-Nhà trọ 441 BPL}"
       APP_ENV: local
       APP_KEY: "${DOCKER_APP_KEY:-}"
       APP_DEBUG: "false"
-      APP_URL: "${APP_URL:-http://127.0.0.1:8000}"
+      APP_URL: "${APP_URL:-http://127.0.0.1:9000}"
       APP_LOCALE: vi
       APP_FALLBACK_LOCALE: vi
       APP_FAKER_LOCALE: vi_VN
@@ -23,7 +23,7 @@ services:
       LOG_CHANNEL: stderr
       LOG_LEVEL: warning
       DB_CONNECTION: sqlite
-      DB_DATABASE: /data/database.sqlite
+      DB_DATABASE: /var/www/html/database/database.sqlite
       DB_FOREIGN_KEYS: "true"
       DB_BUSY_TIMEOUT: "5000"
       DB_JOURNAL_MODE: WAL
@@ -38,13 +38,14 @@ services:
       QUEUE_CONNECTION: sync
       ADMIN_NAME: "${ADMIN_NAME:-Quản trị viên}"
       ADMIN_USERNAME: "${ADMIN_USERNAME:-admin}"
-      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.docker before starting Docker}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env before starting Docker}"
       PROPERTY_CODE: "${PROPERTY_CODE:-441}"
       PROPERTY_NAME: "${PROPERTY_NAME:-Nhà trọ 441 BPL}"
       PROPERTY_ADDRESS: "${PROPERTY_ADDRESS:-}"
     volumes:
       - app-data:/data
       - app-storage:/var/www/html/storage
+      - ./database:/var/www/html/database
 
   frontend:
     image: node:22-alpine

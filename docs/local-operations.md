@@ -9,12 +9,12 @@ Lệnh backup dùng `VACUUM INTO` của SQLite, vì vậy tạo được một �
 ### Docker
 
 ```bash
-docker compose --env-file .env.docker exec app php artisan app:backup-database
+docker compose exec app php artisan app:backup-database
 ```
 
-Backup được lưu trong `/data/backups` thuộc Docker volume `app-data`. Kết quả lệnh cho biết chính xác tên file.
+Backup được lưu trong `/data/backups` thuộc Docker volume `app-data`. Database đang chạy nằm tại `database/database.sqlite` trên máy host và được mount vào container. Kết quả lệnh cho biết chính xác tên file backup.
 
-Retention mặc định là 30 bản. Đổi mặc định trong `.env.docker`:
+Retention mặc định là 30 bản. Đổi mặc định trong `.env`:
 
 ```dotenv
 DB_BACKUP_RETENTION=30
@@ -23,7 +23,7 @@ DB_BACKUP_RETENTION=30
 Hoặc chỉ ghi đè cho một lần chạy:
 
 ```bash
-docker compose --env-file .env.docker exec app php artisan app:backup-database --retention=60
+docker compose exec app php artisan app:backup-database --retention=60
 ```
 
 ### Chạy Laravel không qua Docker
@@ -48,7 +48,7 @@ Thư mục backup không được nằm trong `public/`. Retention chỉ xóa c�
 Với Docker, tạo một thư mục `backups` trên máy rồi chép đúng file được lệnh backup báo:
 
 ```bash
-docker compose --env-file .env.docker cp app:/data/backups/2026-08-12_230000_123456.sqlite ./backups/2026-08-12_230000_123456.sqlite
+docker compose cp app:/data/backups/2026-08-12_230000_123456.sqlite ./backups/2026-08-12_230000_123456.sqlite
 ```
 
 Sau đó dùng Finder/File Explorer chép file `.sqlite` này vào thư mục OneDrive hoặc Google Drive và chờ ứng dụng cloud báo đồng bộ hoàn tất.
@@ -65,26 +65,26 @@ Khôi phục sẽ thay toàn bộ dữ liệu hiện tại. Chọn đúng file v
 2. Dừng container app, không dùng `down -v`:
 
    ```bash
-   docker compose --env-file .env.docker stop app
+   docker compose stop app
    ```
 
-3. Chép file cần khôi phục vào volume của container đã dừng:
+3. Chép file cần khôi phục vào container đã dừng:
 
    ```bash
-   docker compose --env-file .env.docker cp ./backups/BAN-CAN-KHOI-PHUC.sqlite app:/data/restore.sqlite
+   docker compose cp ./backups/BAN-CAN-KHOI-PHUC.sqlite app:/data/restore.sqlite
    ```
 
-4. Thay database khi app vẫn đang dừng và xóa các file WAL/SHM cũ:
+4. Thay database trong thư mục dự án khi app vẫn đang dừng và xóa các file WAL/SHM cũ:
 
    ```bash
-   docker compose --env-file .env.docker run --rm --no-deps --entrypoint sh app -c 'cp /data/restore.sqlite /data/database.sqlite && rm -f /data/database.sqlite-wal /data/database.sqlite-shm /data/restore.sqlite && chown 1000:1000 /data/database.sqlite && chmod 600 /data/database.sqlite'
+   docker compose run --rm --no-deps --entrypoint sh app -c 'cp /data/restore.sqlite /var/www/html/database/database.sqlite && rm -f /var/www/html/database/database.sqlite-wal /var/www/html/database/database.sqlite-shm /data/restore.sqlite && chown 1000:1000 /var/www/html/database/database.sqlite && chmod 600 /var/www/html/database/database.sqlite'
    ```
 
 5. Khởi động lại và kiểm tra đăng nhập, kỳ gần nhất và vài chỉ số phòng:
 
    ```bash
-   docker compose --env-file .env.docker up -d app
-   docker compose --env-file .env.docker logs --tail=50 app
+   docker compose up -d app
+   docker compose logs --tail=50 app
    ```
 
 ### Laravel local
@@ -101,40 +101,40 @@ Không khôi phục bằng cách ghi đè database trong lúc app còn chạy.
 
 ### Docker
 
-Mặc định Docker chỉ bind vào `127.0.0.1`, nên thiết bị khác không truy cập được. Để dùng trong LAN, tìm IPv4 private của máy chạy Docker, ví dụ `192.168.1.20`, rồi đặt trong `.env.docker`:
+Mặc định Docker chỉ bind vào `127.0.0.1`, nên thiết bị khác không truy cập được. Để dùng trong LAN, tìm IPv4 private của máy chạy Docker, ví dụ `192.168.1.20`, rồi đặt trong `.env`:
 
 ```dotenv
 APP_BIND_IP=192.168.1.20
-APP_URL=http://192.168.1.20:8000
+APP_URL=http://192.168.1.20:9000
 APP_DEBUG=false
 ```
 
 Khởi động lại:
 
 ```bash
-docker compose --env-file .env.docker up -d
+docker compose up -d
 ```
 
-Điện thoại cùng Wi-Fi mở `http://192.168.1.20:8000`. Nên đặt DHCP reservation trên router để IP máy chạy app không đổi.
+Điện thoại cùng Wi-Fi mở `http://192.168.1.20:9000`. Nên đặt DHCP reservation trên router để IP máy chạy app không đổi.
 
 ### Laravel local
 
 ```bash
-php artisan serve --host=192.168.1.20 --port=8000
+php artisan serve --host=192.168.1.20 --port=9000
 ```
 
-Chỉ cho phép TCP 8000 trong firewall trên mạng Private/Home. Nếu hệ điều hành hỗ trợ giới hạn subnet, chỉ cho phép dải LAN gia đình, ví dụ `192.168.1.0/24`.
+Chỉ cho phép TCP 9000 trong firewall trên mạng Private/Home. Nếu hệ điều hành hỗ trợ giới hạn subnet, chỉ cho phép dải LAN gia đình, ví dụ `192.168.1.0/24`.
 
 ## Không đưa app ra Internet công cộng
 
-- Không cấu hình port forwarding/NAT cho cổng 8000 trên router.
+- Không cấu hình port forwarding/NAT cho cổng 9000 trên router.
 - Không bật DMZ host, UPnP mapping, public reverse proxy hoặc tunnel như ngrok/Cloudflare Tunnel cho app này.
 - Không bind Docker vào `0.0.0.0` nếu có thể bind thẳng private LAN IP.
 - Giữ `APP_DEBUG=false`, dùng mật khẩu admin riêng và không chia sẻ `APP_KEY`/`.env`.
 - Nếu Wi-Fi người thuê dùng chung hạ tầng, tách thiết bị quản trị sang private SSID/VLAN; guest Wi-Fi không được truy cập máy chạy app.
 - Không dùng Laravel development server như một public production server.
 
-Có thể kiểm tra từ mạng di động 4G/5G rằng `http://IP-CONG-CONG:8000` không truy cập được. Không đăng địa chỉ LAN, file backup hoặc thông tin đăng nhập lên nơi công cộng.
+Có thể kiểm tra từ mạng di động 4G/5G rằng `http://IP-CONG-CONG:9000` không truy cập được. Không đăng địa chỉ LAN, file backup hoặc thông tin đăng nhập lên nơi công cộng.
 
 ## WAL và hai thiết bị trong gia đình
 
