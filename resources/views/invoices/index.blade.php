@@ -65,7 +65,7 @@
             </article>
         @empty
             <div class="card empty-state">
-                <h2>Chưa có hóa đơn nháp</h2>
+                <h2>Chưa có hóa đơn</h2>
                 <p class="muted">Hóa đơn sẽ tự tạo khi lưu hoặc bỏ qua chỉ số của một phòng.</p>
             </div>
         @endforelse

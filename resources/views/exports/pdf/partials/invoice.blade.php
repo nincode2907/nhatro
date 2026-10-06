@@ -12,9 +12,11 @@
                     <div class="pdf-address">{{ $invoice->billingPeriod->property->address }}</div>
                 @endif
             </td>
-            <td style="width: 25%; text-align: right">
-                <span class="pdf-status">{{ $invoice->status->label() }}</span>
-            </td>
+            @if ($invoice->status === \App\Enums\InvoiceStatus::Finalized)
+                <td style="width: 25%; text-align: right">
+                    <span class="pdf-status">{{ $invoice->status->label() }}</span>
+                </td>
+            @endif
         </tr>
     </table>
 

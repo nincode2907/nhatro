@@ -11,7 +11,9 @@
                 <span>{{ $invoice->billingPeriod->property->address }}</span>
             @endif
         </div>
-        <span class="invoice-paper-status">{{ $invoice->status->label() }}</span>
+        @if ($invoice->status === \App\Enums\InvoiceStatus::Finalized)
+            <span class="invoice-paper-status">{{ $invoice->status->label() }}</span>
+        @endif
     </header>
 
     <div class="invoice-paper-title">

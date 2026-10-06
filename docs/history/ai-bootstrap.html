@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hồ sơ bootstrap AI · Nhà trọ 441</title>
+<link rel="icon" type="image/svg+xml" href="../../public/favicon.svg">
+<style>
+:root{--ink:#242b29;--muted:#54635c;--paper:#f4f1e9;--line:#c8d2c8;--green:#145743;--amber:#754915}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:44px 24px 70px}header{border-top:6px solid var(--green);padding-top:22px}h1{font-size:clamp(32px,5vw,56px);line-height:1.15;letter-spacing:-.04em;max-width:850px;margin:16px 0}h2{font-size:25px;margin:40px 0 14px}h3{font-size:19px;margin:0 0 8px}p{margin:8px 0 16px}a{color:var(--green);text-underline-offset:3px}a:focus-visible{outline:3px solid var(--amber);outline-offset:3px}.meta{font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}.lead{font-size:20px;max-width:820px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{padding:22px;border:1px solid var(--line);background:#fff;border-radius:10px}.number{display:block;font-size:40px;font-weight:750;color:var(--green);line-height:1.2}.quiet{color:var(--muted)}.warning{border-left:5px solid #ac742b;background:#fff5df;padding:16px 22px}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;list-style:none;padding:0;counter-reset:steps}.flow li{padding:18px;background:#e4ece4;border-radius:8px;counter-increment:steps}.flow li:before{content:counter(steps);display:block;font-size:26px;font-weight:750;color:var(--green)}.table-scroll{overflow:auto}table{width:100%;border-collapse:collapse;background:white;font-size:15px}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--green);color:white}code{font-size:.9em;overflow-wrap:anywhere}nav{display:flex;gap:18px;flex-wrap:wrap;margin:24px 0}.result{display:flex;height:18px;border-radius:8px;overflow:hidden;background:#b57b31}.result span{width:96.7%;background:var(--green)}details{margin-top:16px;padding:16px;background:white;border:1px solid var(--line);border-radius:8px}summary{cursor:pointer;font-weight:650}footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px}@media(max-width:750px){.grid,.flow{grid-template-columns:1fr}main{padding:24px 16px 45px}th,td{padding:10px}h1{letter-spacing:-.02em}}
+</style>
+</head>
+<body><main>
+<header><p class="warning">Báo cáo lịch sử ngày 05/10/2026. Xem <a href="../local-guide.html">hướng dẫn local hiện hành</a> để chạy Docker.</p><div class="meta">Nhà trọ 441 · Kiểm tra ngày 05/10/2026</div>
+<h1>Ít ngữ cảnh thường trực.<br>Đủ kiến thức đúng lúc.</h1>
+<p class="lead">Hướng dẫn cho agent đã được thiết lập. Kiến thức nghiệp vụ giữ nguyên và được nạp theo task; runtime hiện tại vẫn chưa có block Dev Hub.</p>
+<nav aria-label="Mục lục"><a href="#knowledge">Nạp kiến thức</a><a href="#runtime">Runtime local</a><a href="#checks">Kiểm chứng</a><a href="ai-bootstrap.md">Nguồn Markdown đầy đủ</a></nav></header>
+<section class="grid" aria-label="Kết quả bootstrap">
+<div class="card"><span class="number">0 → 65</span><h3>Dòng AGENTS.md</h3><p>Stack, ranh giới, dữ liệu, lệnh và đường dẫn đến kiến thức cần thiết.</p><a href="../../AGENTS.md">Đọc operating manual</a></div>
+<div class="card"><span class="number">45</span><h3>Dòng skill nghiệp vụ</h3><p>Điện nước, transaction, invoice snapshot và các test liên quan.</p><a href="../../.agents/skills/nhatro-billing/SKILL.md">Đọc nhatro-billing</a></div>
+<div class="card"><span class="number">Giữ nguyên</span><h3>Dữ liệu và tài liệu gốc</h3><p>Không đổi SQLite, credentials, port, registry, proxy hoặc PHP hệ thống. Không commit/push.</p></div></section>
+<section id="knowledge"><h2>Task dẫn đến kiến thức cần nạp</h2>
+<ol class="flow"><li><h3>Bắt đầu task</h3><p>Đọc AGENTS.md: các quy tắc áp dụng toàn repo.</p></li><li><h3>Xác định phạm vi</h3><p>Reading và hóa đơn → skill nghiệp vụ. Start/backup → docs vận hành.</p></li><li><h3>Tra đúng phần</h3><p>Chỉ đọc phần liên quan của yêu cầu V1 hoặc ERD; giữ nguồn gốc nguyên vẹn.</p></li><li><h3>Đối chiếu và kiểm tra</h3><p>Routes, actions, migrations và tests chứng minh trạng thái triển khai.</p></li></ol>
+<div class="table-scroll"><table><thead><tr><th>Loại kiến thức</th><th>Nơi đọc</th><th>Khi dùng</th></tr></thead><tbody>
+<tr><td>Core</td><td><a href="../../AGENTS.md">AGENTS.md</a></td><td>Mọi task</td></tr>
+<tr><td>Workflow</td><td><a href="../../.agents/skills/nhatro-billing/SKILL.md">nhatro-billing</a></td><td>Điện nước, giá, hóa đơn, in/export</td></tr>
+<tr><td>Reference</td><td><a href="../local-guide.md">Chạy ứng dụng</a> · <a href="../local-guide.md">Backup và LAN</a></td><td>Vận hành; đọc trước khi start/seed/restore</td></tr>
+<tr><td>Yêu cầu, kế hoạch và rationale</td><td><a href="../reference/nhatro-441-codex-context.md">Context V1</a> · <a href="../reference/nhatro-441-erd.md">ERD</a></td><td>Tra nghiệp vụ/schema; không coi phase dự kiến là tính năng đã có</td></tr>
+</tbody></table></div>
+<p class="quiet">Tái sử dụng global skills: feature-builder, ui-page-builder, task-qa-review, data-model-architecture-review và security-review theo đúng loại task. Không nhân bản methodology vào repo.</p>
+<p class="warning">Plan có phase chốt kỳ nhưng routes hiện chưa có endpoint chốt kỳ. Enum và guard finalized là bằng chứng bảo vệ trạng thái, chưa chứng minh UI hoàn tất.</p></section>
+<section id="runtime"><h2>Runtime: cấu hình đã thấy, đường dẫn chưa xác minh</h2>
+<div class="table-scroll"><table><thead><tr><th>Thành phần</th><th>Hiện tại</th><th>Giới hạn</th></tr></thead><tbody>
+<tr><td>App Docker</td><td>Loopback 9000 → container 8000</td><td>Không có app Nhà trọ đang nghe tại lần kiểm tra</td></tr>
+<tr><td>Vite Docker</td><td>5173 → 5173, profile dev</td><td>Không thấy listener; cấu hình publish thiếu host IP, có thể mở wildcard/LAN</td></tr>
+<tr><td>Env</td><td>.env dùng 9000; .env.docker và .env.example dùng 8000</td><td>.env.docker chỉ dùng khi chọn --env-file</td></tr>
+<tr><td>Dev Hub</td><td>Registry tồn tại, repo chưa đăng ký</td><td>Allocator trả exit 2 và yêu cầu review identity/service; chưa cấp block</td></tr>
+<tr><td>Shared Caddy</td><td>Docker publish 0.0.0.0:80; host lsof hiển thị IPv6 wildcard</td><td>Không phải loopback-only; chưa có route nhatro.localhost</td></tr>
+</tbody></table></div>
+<p class="warning"><code>http://127.0.0.1:9000</code> là URL theo cấu hình <strong>khi app được start</strong>. <code>nhatro.localhost</code> chỉ là đề xuất. Chưa kiểm chứng HTTP app/proxy qua IPv4, IPv6 và browser. Không start Docker trên dữ liệu thật vì entrypoint tự migrate và seed.</p>
+<h3>Đường đi để chuẩn hóa runtime</h3>
+<ol class="flow"><li><h3>Review identity</h3><p>Nhà trọ 441; services app và frontend. Xử lý trạng thái discovery rồi chạy lại allocator.</p></li><li><h3>Kiểm tra và reserve</h3><p>Toàn block IPv4/IPv6 và Docker. Quy ước x000 app, x030 frontend; SQLite không expose port.</p></li><li><h3>Đồng bộ cấu hình</h3><p>Compose, env, Vite/HMR và docs dùng allocation xác nhận. Giữ credentials, DB và bind loopback.</p></li><li><h3>Kiểm chứng route</h3><p>Thêm proxy khi được phép, kiểm tra origin/cookie/CORS và phản hồi HTTP mong đợi ở cả hai IP family cùng browser.</p></li></ol>
+<p>Quy trình onboarding Dev Hub yêu cầu phạm vi đăng ký/migration rõ trước khi ghi cấu hình. Phần này là đề xuất. Rollback bằng snapshot cấu hình; không xóa DB hoặc volume.</p></section>
+<section id="checks"><h2>Kiểm chứng và lỗi còn lại</h2>
+<div class="card"><h3>88 / 91 test đạt</h3><div class="result" role="img" aria-label="88 test đạt, 3 test lỗi"></div><p>Ba lỗi ở DemoPropertySeederTest vẫn kỳ vọng 4 tầng, trong khi seeder tạo 5 tầng. Tests và seeder không thuộc diff; README mô tả 5 tầng/14 phòng.</p></div>
+<details open><summary>Tooling và cấu hình</summary><ul><li>PHP 8.4.18 có sẵn chạy được Laravel 13.24.0. PHP mặc định 7.4 lỗi libffi; không đổi hệ thống.</li><li>RTK không có trong PATH/vị trí phổ biến, dùng fallback trực tiếp.</li><li>Compose mặc định và dev qua config --quiet; không in secrets.</li><li>Pint báo lỗi có sẵn tại PropertyStructureController.php và UpdateRoomSettings.php; không sửa ngoài scope.</li><li>Skill kiểm tra bằng validator trong venv tạm có PyYAML. Kiểm tra diff, links, favicon và HTML tĩnh; chưa xem render vì browser chặn URL file://.</li><li>Chưa build/start Docker hoặc npm build; chưa xác minh runtime app/proxy.</li></ul></details>
+<details><summary>Các thay đổi nhỏ giúp lần chạy sau rõ ràng hơn</summary><p>README chỉ định native serve với host 127.0.0.1 và port 9000. Thêm favicon SVG cho layout, trang lỗi DB bận và hai trang in; các trang đã có lang=vi. File favicon.ico cũ rỗng.</p></details></section>
+<footer><p>Phần còn lại: review/cấp block Dev Hub và migrate runtime; xử lý test demo seeder cùng formatting PHP trong task riêng.</p><a href="ai-bootstrap.md">Đọc bằng chứng, đường dẫn và phạm vi đầy đủ trong Markdown</a></footer>
+</main></body></html>

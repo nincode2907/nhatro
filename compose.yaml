@@ -46,6 +46,14 @@ services:
       - app-data:/data
       - app-storage:/var/www/html/storage
       - ./database:/var/www/html/database
+      # Chạy local: sửa mã nguồn rồi refresh, giữ vendor trong image.
+      - ./app:/var/www/html/app
+      - ./bootstrap/app.php:/var/www/html/bootstrap/app.php:ro
+      - ./config:/var/www/html/config
+      - ./public:/var/www/html/public
+      - ./resources:/var/www/html/resources
+      - ./routes:/var/www/html/routes
+      - ./artisan:/var/www/html/artisan:ro
 
   frontend:
     image: node:22-alpine
@@ -53,7 +61,7 @@ services:
     working_dir: /var/www/html
     init: true
     ports:
-      - "${VITE_PORT:-5173}:5173"
+      - "127.0.0.1:${VITE_PORT:-5173}:5173"
     command: >
       sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0"
     volumes:

@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\RoomSetting;
 use App\Models\User;
 use App\Services\Billing\InvoiceCalculator;
+use App\Services\Exports\InvoiceExportDataFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PhpOffice\PhpSpreadsheet\IOFactory as SpreadsheetIOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -203,6 +204,13 @@ class InvoiceExportTest extends TestCase
         $this->assertGreaterThan(20_000, strlen($batch));
         $this->assertSame(1, preg_match_all('/\/Type\s*\/Page\b/', $single));
         $this->assertSame(2, preg_match_all('/\/Type\s*\/Page\b/', $batch));
+
+        $record = app(InvoiceExportDataFactory::class)
+            ->forInvoice($invoices->first());
+        $html = view('exports.pdf.partials.invoice', ['record' => $record])->render();
+        $this->assertStringNotContainsString('Bản nháp', $html);
+        $this->assertStringNotContainsString('<span class="pdf-status">', $html);
+
     }
 
     public function test_docx_supports_editable_single_and_batch_exports(): void

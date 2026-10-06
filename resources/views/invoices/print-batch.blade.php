@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>In hàng loạt — {{ $period->label() }}</title>
     <link rel="stylesheet" href="{{ asset('css/invoice-print.css') }}">

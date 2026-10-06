@@ -102,6 +102,7 @@ class InvoicePrintRenderingTest extends TestCase
             ->assertSeeText('Thu tiền trong tháng')
             ->assertSeeText('Người thu')
             ->assertSeeText('Người thuê')
+            ->assertDontSeeText('Bản nháp')
             ->assertDontSeeText('Số lượng')
             ->assertDontSee('site-header', false);
 

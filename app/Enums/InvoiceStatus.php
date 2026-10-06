@@ -10,7 +10,7 @@ enum InvoiceStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Draft => 'Bản nháp',
+            self::Draft => 'Đã tạo',
             self::Finalized => 'Đã chốt',
         };
     }
