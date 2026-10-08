@@ -187,3 +187,7 @@ cần cấu hình cookie phù hợp. Giữ APP_DEBUG=false và không expose por
 ## 10. Giá mặc định và nhập tiền
 
 Trong **Phòng**, chọn **Giá mặc định** cạnh **Quản lý tầng & phòng** để sửa giá phòng, điện, nước, xe, rác và Internet. Phòng mới sao chép các mức giá này ngay khi tạo; có thể sửa giá riêng tại cài đặt phòng. Đổi giá mặc định chỉ áp dụng cho các phòng thêm sau đó. Các ô nhập tiền và hóa đơn dùng dấu phẩy ngăn cách hàng nghìn, ví dụ `1,000,000`; dữ liệu vẫn lưu số nguyên VND.
+
+## 11. Đóng kỳ
+
+Kỳ chỉ đóng được khi tất cả phòng đang hoạt động đã ghi chỉ số hoặc được bỏ qua. Đóng kỳ sẽ chốt hóa đơn, khóa chỉ số và lưu người cùng thời điểm đóng; không chỉnh sửa thông thường sau đó.

@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function (): void {
         ->name('billing-periods.index');
     Route::post('/billing-periods', [BillingPeriodController::class, 'store'])
         ->name('billing-periods.store');
+    Route::post('/billing-periods/{period}/finalize', [BillingPeriodController::class, 'finalize'])
+        ->name('billing-periods.finalize');
     Route::get('/billing-periods/{period}', [BillingPeriodController::class, 'show'])
         ->name('billing-periods.show');
     Route::delete('/billing-periods/{period}/readings', [BillingPeriodController::class, 'destroyReadings'])

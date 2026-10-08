@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\BillingPeriods\FinalizeBillingPeriod;
 use App\Actions\MeterReadings\ReadingFlow;
 use App\Actions\MeterReadings\ResetBillingPeriodReadings;
 use App\Enums\BillingPeriodStatus;
@@ -10,6 +11,7 @@ use App\Models\BillingPeriod;
 use App\Models\Property;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -84,7 +86,22 @@ class BillingPeriodController extends Controller
 
         $invoiceCount = $period->invoices()->count();
 
-        return view('billing-periods.show', compact('period', 'periods', 'floorSummaries', 'invoiceCount'));
+        $pendingRoomCount = $floorSummaries->sum(fn (array $summary): int => $summary['total'] - $summary['processed']);
+
+        return view('billing-periods.show', compact('period', 'periods', 'floorSummaries', 'invoiceCount', 'pendingRoomCount'));
+    }
+
+    public function finalize(Request $request, BillingPeriod $period, FinalizeBillingPeriod $finalizePeriod): RedirectResponse
+    {
+        $this->ensureConfiguredPeriod($period);
+
+        if (! $period->isOpen()) {
+            return redirect()->route('billing-periods.show', $period)->with('status', 'Kỳ này đã được đóng.');
+        }
+
+        $finalizePeriod->handle($period, $request->user());
+
+        return redirect()->route('billing-periods.show', $period)->with('status', 'Kỳ đã đóng; các hóa đơn đã được chốt.');
     }
 
     public function destroyReadings(

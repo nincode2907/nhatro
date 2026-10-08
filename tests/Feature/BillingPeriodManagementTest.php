@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Enums\BillingPeriodStatus;
+use App\Enums\InvoiceStatus;
+use App\Enums\MeterReadingStatus;
+use App\Enums\SkipReason;
 use App\Models\BillingPeriod;
 use App\Models\Floor;
 use App\Models\Invoice;
@@ -50,6 +53,7 @@ class BillingPeriodManagementTest extends TestCase
             ->assertRedirect(route('login'));
         $this->get(route('billing-periods.show', $period))->assertRedirect(route('login'));
         $this->delete(route('billing-periods.readings.destroy', $period))->assertRedirect(route('login'));
+        $this->post(route('billing-periods.finalize', $period))->assertRedirect(route('login'));
     }
 
     public function test_admin_can_create_a_month_with_exact_boundaries_and_reopen_the_same_period(): void
@@ -96,6 +100,65 @@ class BillingPeriodManagementTest extends TestCase
             ->assertOk()
             ->assertSeeText('Đã xử lý 0 / 3')
             ->assertSeeText('Bắt đầu ghi');
+    }
+
+    public function test_period_cannot_be_closed_while_active_rooms_are_pending(): void
+    {
+        $floor = Floor::factory()->for($this->property)->create();
+        $room = Room::factory()->for($floor)->create();
+        RoomSetting::factory()->for($room)->create();
+        $period = $this->period('2026-08');
+
+        $this->actingAs($this->admin)
+            ->get(route('billing-periods.show', $period))
+            ->assertOk()
+            ->assertSeeText('Còn 1 phòng chưa ghi hoặc bỏ qua')
+            ->assertSee('type="submit" disabled', false);
+
+        $this->actingAs($this->admin)
+            ->from(route('billing-periods.show', $period))
+            ->post(route('billing-periods.finalize', $period))
+            ->assertRedirect(route('billing-periods.show', $period))
+            ->assertSessionHasErrors('period');
+
+        $this->assertSame(BillingPeriodStatus::Open, $period->fresh()->status);
+    }
+
+    public function test_admin_can_close_period_after_all_active_rooms_are_recorded_or_skipped(): void
+    {
+        $floor = Floor::factory()->for($this->property)->create();
+        $recordedRoom = Room::factory()->for($floor)->create(['room_number' => '101']);
+        $skippedRoom = Room::factory()->for($floor)->create(['room_number' => '102']);
+        RoomSetting::factory()->for($recordedRoom)->create();
+        RoomSetting::factory()->for($skippedRoom)->create();
+        $period = $this->period('2026-08');
+        $calculator = $this->app->make(InvoiceCalculator::class);
+
+        $recorded = MeterReading::factory()->for($period)->for($recordedRoom)->recorded()->create();
+        $skipped = MeterReading::factory()->for($period)->for($skippedRoom)->create([
+            'status' => MeterReadingStatus::Skipped,
+            'skip_reason' => SkipReason::Other,
+            'recorded_at' => null,
+        ]);
+        $recordedInvoice = $calculator->recalculateDraft($period, $recordedRoom, $recorded);
+        $skippedInvoice = $calculator->recalculateDraft($period, $skippedRoom, $skipped);
+        $recordedSnapshot = $recordedInvoice->items->map(fn ($item): array => $item->only(['type', 'quantity', 'unit_price', 'amount']))->all();
+        $recordedTotal = $recordedInvoice->total;
+
+        $this->actingAs($this->admin)
+            ->post(route('billing-periods.finalize', $period))
+            ->assertRedirect(route('billing-periods.show', $period))
+            ->assertSessionHas('status', 'Kỳ đã đóng; các hóa đơn đã được chốt.');
+
+        $closed = $period->fresh();
+        $this->assertSame(BillingPeriodStatus::Finalized, $closed->status);
+        $this->assertSame($this->admin->id, $closed->finalized_by);
+        $this->assertNotNull($closed->finalized_at);
+        $this->assertSame(InvoiceStatus::Finalized, $recordedInvoice->fresh()->status);
+        $this->assertSame(InvoiceStatus::Finalized, $skippedInvoice->fresh()->status);
+        $this->assertNotNull($recordedInvoice->fresh()->locked_at);
+        $this->assertSame($recordedTotal, $recordedInvoice->fresh()->total);
+        $this->assertSame($recordedSnapshot, $recordedInvoice->fresh()->items->map(fn ($item): array => $item->only(['type', 'quantity', 'unit_price', 'amount']))->all());
     }
 
     public function test_period_from_another_property_is_not_accessible(): void

@@ -44,6 +44,26 @@
         Hóa đơn tháng · {{ $invoiceCount }} bản
     </a>
 
+    @if ($period->isOpen())
+        <section class="card period-finalize-card" aria-labelledby="finalize-period-title">
+            <div>
+                <h2 id="finalize-period-title">Đóng kỳ</h2>
+                @if ($pendingRoomCount > 0)
+                    <p>Còn {{ $pendingRoomCount }} phòng chưa ghi hoặc bỏ qua. Hoàn tất các phòng để đóng kỳ.</p>
+                @else
+                    <p>Đã xử lý tất cả phòng. Đóng kỳ sẽ khóa chỉ số và chốt các hóa đơn.</p>
+                @endif
+            </div>
+            <form method="POST" action="{{ route('billing-periods.finalize', $period) }}"
+                  data-confirm-message="Đóng {{ $period->label() }} và chốt các hóa đơn? Sau khi đóng, không thể sửa chỉ số thông thường.">
+                @csrf
+                <button class="button button-primary" type="submit" @disabled($pendingRoomCount > 0)>Đóng kỳ</button>
+            </form>
+        </section>
+    @endif
+
+    @error('period')<div class="notice notice-error" role="alert">{{ $message }}</div>@enderror
+
     <section class="floor-progress-list" aria-label="Tiến độ theo tầng">
         @forelse ($floorSummaries as $summary)
             @php
