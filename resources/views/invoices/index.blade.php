@@ -49,7 +49,7 @@
 
                 <dl class="invoice-card-total">
                     <dt>Tổng cộng</dt>
-                    <dd>{{ number_format($invoice->total, 0, ',', '.') }} đ</dd>
+                    <dd>{{ number_format($invoice->total, 0, '.', ',') }} đ</dd>
                 </dl>
 
                 <div class="invoice-card-actions">

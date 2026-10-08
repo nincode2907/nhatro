@@ -122,7 +122,7 @@ class PropertyStructureManagementTest extends TestCase
         $this->assertDatabaseCount('floors', 1);
     }
 
-    public function test_admin_can_add_a_room_with_zero_settings_then_configure_prices(): void
+    public function test_admin_can_add_a_room_with_default_settings_then_configure_prices(): void
     {
         $response = $this->actingAs($this->admin)
             ->post(route('property-structure.rooms.store', $this->floor), [
@@ -145,9 +145,9 @@ class PropertyStructureManagementTest extends TestCase
         ]);
         $this->assertDatabaseHas('room_settings', [
             'room_id' => $room->id,
-            'rent_amount' => 0,
-            'electricity_unit_price' => 0,
-            'water_unit_price' => 0,
+            'rent_amount' => 3_000_000,
+            'electricity_unit_price' => 3_200,
+            'water_unit_price' => 17_000,
         ]);
     }
 

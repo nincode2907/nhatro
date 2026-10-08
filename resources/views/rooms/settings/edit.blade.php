@@ -100,11 +100,10 @@
                     <div class="field">
                         <label for="{{ $field }}">{{ $label }}</label>
                         <div class="input-with-suffix">
-                            <input id="{{ $field }}" name="{{ $field }}" type="number" inputmode="numeric" min="0" step="1"
-                                   value="{{ old($field, $settings->{$field}) }}" required>
+                            <x-money-input :name="$field" :value="old($field, $settings->{$field})" />
                             <span>đ / {{ $suffix }}</span>
                         </div>
-                        <p class="field-help">Hiện tại: {{ number_format((int) old($field, $settings->{$field}), 0, ',', '.') }} đ</p>
+                        <p class="field-help">Hiện tại: {{ \App\Support\Money::format(old($field, $settings->{$field})) }} đ</p>
                         @error($field)<p class="field-error">{{ $message }}</p>@enderror
                     </div>
                 @endforeach
@@ -124,8 +123,7 @@
                     <div class="field">
                         <label for="electricity_unit_price">Đơn giá điện</label>
                         <div class="input-with-suffix">
-                            <input id="electricity_unit_price" name="electricity_unit_price" type="number" inputmode="numeric"
-                                   min="0" step="1" value="{{ old('electricity_unit_price', $settings->electricity_unit_price) }}" required>
+                            <x-money-input name="electricity_unit_price" :value="old('electricity_unit_price', $settings->electricity_unit_price)" />
                             <span>đ / kWh</span>
                         </div>
                         @error('electricity_unit_price')<p class="field-error">{{ $message }}</p>@enderror
@@ -143,8 +141,7 @@
                     <div class="field">
                         <label for="water_unit_price">Đơn giá nước</label>
                         <div class="input-with-suffix">
-                            <input id="water_unit_price" name="water_unit_price" type="number" inputmode="numeric"
-                                   min="0" step="1" value="{{ old('water_unit_price', $settings->water_unit_price) }}" required>
+                            <x-money-input name="water_unit_price" :value="old('water_unit_price', $settings->water_unit_price)" />
                             <span>đ / m³</span>
                         </div>
                         @error('water_unit_price')<p class="field-error">{{ $message }}</p>@enderror

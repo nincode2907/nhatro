@@ -3,12 +3,22 @@
 namespace App\Http\Requests\Rooms;
 
 use App\Enums\RoomStatus;
+use App\Support\Money;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateRoomSettingsRequest extends FormRequest
 {
     private const MAX_MONEY_AMOUNT = 1_000_000_000;
+
+    protected function prepareForValidation(): void
+    {
+        foreach ([...array_keys(Money::DEFAULT_PRICES), 'other_amount'] as $field) {
+            if ($this->has($field)) {
+                $this->merge([$field => Money::normalize($this->input($field))]);
+            }
+        }
+    }
 
     public function authorize(): bool
     {

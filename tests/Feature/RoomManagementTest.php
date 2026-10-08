@@ -75,7 +75,7 @@ class RoomManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Phòng 101')
             ->assertSee('Tiền phòng')
-            ->assertSee('3.000.000 đ')
+            ->assertSee('3,000,000 đ')
             ->assertSee('Có đồng hồ điện');
     }
 

@@ -137,3 +137,34 @@ if (readingForm) {
 
     refreshUsage();
 }
+
+// Group VND amounts without converting them to floating-point numbers.
+document.querySelectorAll('[data-money-input]').forEach((input) => {
+    const formatMoney = () => {
+        if (!/^[0-9,]*$/.test(input.value)) return;
+        const cursor = input.selectionStart ?? input.value.length;
+        const digitsBeforeCursor = input.value.slice(0, cursor).replace(/,/g, '').length;
+        const digits = input.value.replace(/,/g, '');
+        input.value = digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        let position = 0;
+        let count = 0;
+        while (position < input.value.length && count < digitsBeforeCursor) {
+            if (input.value[position] !== ',') count++;
+            position++;
+        }
+        input.setSelectionRange(position, position);
+    };
+    input.addEventListener('input', (event) => {
+        if (!event.isComposing) formatMoney();
+    });
+    input.addEventListener('compositionend', formatMoney);
+    input.addEventListener('keydown', (event) => {
+        const cursor = input.selectionStart;
+        if (cursor !== input.selectionEnd) return;
+        if (event.key === 'Backspace' && input.value[cursor - 1] === ',') {
+            input.setSelectionRange(cursor - 1, cursor - 1);
+        } else if (event.key === 'Delete' && input.value[cursor] === ',') {
+            input.setSelectionRange(cursor + 1, cursor + 1);
+        }
+    });
+});

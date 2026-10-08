@@ -62,8 +62,8 @@
                     </th>
                     <td class="pdf-reading">{{ $item && $row['type']->isMetered() ? number_format($item->metadata['previous'], 0, ',', '.') : '' }}</td>
                     <td class="pdf-reading">{{ $item && $row['type']->isMetered() ? number_format($item->metadata['current'], 0, ',', '.') : '' }}</td>
-                    <td class="pdf-unit-price">{{ $item && $row['type']->isMetered() ? number_format($item->unit_price, 0, ',', '.').' đ' : '' }}</td>
-                    <td class="pdf-amount">{{ $item ? number_format($item->amount, 0, ',', '.').' đ' : '-' }}</td>
+                    <td class="pdf-unit-price">{{ $item && $row['type']->isMetered() ? number_format($item->unit_price, 0, '.', ',').' đ' : '' }}</td>
+                    <td class="pdf-amount">{{ $item ? number_format($item->amount, 0, '.', ',').' đ' : '-' }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -72,7 +72,7 @@
     <table class="pdf-total">
         <tr>
             <td>Tổng cộng</td>
-            <td class="pdf-total-amount">{{ number_format($invoice->total, 0, ',', '.') }} đ</td>
+            <td class="pdf-total-amount">{{ number_format($invoice->total, 0, '.', ',') }} đ</td>
         </tr>
     </table>
 

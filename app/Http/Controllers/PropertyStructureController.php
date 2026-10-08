@@ -106,8 +106,7 @@ class PropertyStructureController extends Controller
         StoreRoomRequest $request,
         Floor $floor,
         ArrangeRoomWalkOrder $arrangeWalkOrder,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $this->ensureFloor($floor);
         $data = $request->validated();
         $status = RoomStatus::from($data['status']);
@@ -130,14 +129,14 @@ class PropertyStructureController extends Controller
                 'status' => $status,
                 'is_active' => $status->isActive(),
             ]);
-            $room->settings()->create([]);
+            $room->settings()->create($floor->property->defaultRoomPrices());
 
             return $room;
         });
 
         return redirect()
             ->route('rooms.settings.edit', $room)
-            ->with('status', "Đã thêm phòng {$room->room_number}. Hãy kiểm tra và lưu mức giá.");
+            ->with('status', "Đã thêm phòng {$room->room_number}. Đã áp dụng giá mặc định; bạn có thể sửa giá riêng của phòng.");
     }
 
     public function editRoom(Room $room): View
@@ -160,8 +159,7 @@ class PropertyStructureController extends Controller
         UpdateRoomStructureRequest $request,
         Room $room,
         ArrangeRoomWalkOrder $arrangeWalkOrder,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $property = $this->ensureRoom($room);
         $data = $request->validated();
         $targetFloor = $property->floors()->findOrFail($data['floor_id']);

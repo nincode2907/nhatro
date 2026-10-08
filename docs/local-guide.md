@@ -1,6 +1,6 @@
 # Chạy local — Nhà trọ 441
 
-Cập nhật: 06/10/2026. Đây là hướng dẫn vận hành hiện tại; [bản trực quan](local-guide.html) đọc cùng nội dung. App dùng Laravel + SQLite trong Docker, cho một nhà trọ; không cần thiết lập production hoặc dịch vụ cloud.
+Cập nhật: 08/10/2026. Đây là hướng dẫn vận hành hiện tại; [bản trực quan](local-guide.html) đọc cùng nội dung. App dùng Laravel + SQLite trong Docker, cho một nhà trọ; không cần thiết lập production hoặc dịch vụ cloud.
 
 ## 1. Một env, một lệnh chạy
 
@@ -18,7 +18,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Mở [http://127.0.0.1:9000](http://127.0.0.1:9000). Đây là URL cấu hình; app dùng được sau khi container khởi động thành công. Xem health/log:
+Mở [http://127.0.0.1:15400](http://127.0.0.1:15400). Đây là URL cấu hình; app dùng được sau khi container khởi động thành công. Xem health/log:
 
 ```bash
 docker compose ps
@@ -32,8 +32,8 @@ Khi Docker Desktop khởi động lại, container có `restart: unless-stopped`
 | Biến / thành phần | Giá trị local | Vai trò |
 |---|---|---|
 | APP_ENV | local | Môi trường app, Compose cố định local |
-| APP_PORT / APP_BIND_IP | 9000 / 127.0.0.1 | Host chỉ nghe loopback; app bên trong container dùng 8000 |
-| APP_URL | http://127.0.0.1:9000 | URL bên ngoài; cập nhật khi chủ động dùng LAN |
+| APP_PORT / APP_BIND_IP | 15400 / 127.0.0.1 | Host chỉ nghe loopback; app bên trong container dùng 8000 |
+| APP_URL | http://127.0.0.1:15400 | URL bên ngoài; cập nhật khi chủ động dùng LAN |
 | APP_DEBUG | false trong Compose mặc định | Giữ lỗi chi tiết khỏi màn hình sử dụng; xem logs để debug |
 | DOCKER_APP_KEY | Trống mặc định | Docker tạo và giữ key trong volume app-data; không đổi key đã dùng |
 | ADMIN_* | Tài khoản trong .env | Entrypoint seed/cập nhật admin mỗi lần start |
@@ -42,15 +42,15 @@ Khi Docker Desktop khởi động lại, container có `restart: unless-stopped`
 | SQLite | database/database.sqlite | Bind mount thật, không có port DB, không cần MySQL/Postgres |
 | Session/cache | database | Không cần Redis |
 | Queue | sync | Không cần worker riêng |
-| VITE_PORT | 5173 | Profile dev tùy chọn, bind loopback |
+| VITE_PORT | 15430 | Profile dev tùy chọn, bind loopback |
 
 Compose đọc `.env` để nội suy, chỉ truyền các biến khai báo trong `environment` vào container. Các biến DB/session/log trong `.env.example` hỗ trợ tooling PHP tại host; Docker tự cấu hình SQLite, locale vi, timezone Asia/Ho_Chi_Minh, log stderr, session encrypt và queue sync. `APP_KEY` native và `DOCKER_APP_KEY` không thay thế nhau tự động; key Docker đang lưu phải được bảo toàn.
 
-Cổng 9000/5173 được giữ theo cấu hình repo hiện có, chưa được cấp block Dev Hub. Không có route `nhatro.localhost`; không cần proxy để dùng app. Đọc registry trung tâm trước khi có task thay port/hostname.
+Dev Hub đã đăng ký project `nhatro-441` trong block 15400–15499: app host 15400 → container 8000; Vite host 15430 → container 5173. SQLite không expose port. Proxy `nhatro.localhost` đang tắt; không cần proxy để dùng app. Đọc registry trung tâm trước khi có task thay port/hostname.
 
 ## 3. Sửa code và công cụ tùy chọn
 
-Compose mặc định mount `app`, `bootstrap/app.php`, `config`, `database`, `public`, `resources`, `routes`, `artisan` vào container. Sửa PHP, Blade hoặc CSS/JS trong `public/` rồi refresh; vendor giữ trong image. Đây là cấu hình dùng local, không có nhánh chạy production riêng.
+Compose mặc định mount `app`, `bootstrap/app.php`, `config`, `database`, `lang`, `public`, `resources`, `routes`, `artisan` vào container. Sửa PHP, Blade, bản dịch hoặc CSS/JS trong `public/` rồi refresh; vendor giữ trong image. Đây là cấu hình dùng local, không có nhánh chạy production riêng.
 
 Đổi `composer.json`, `package.json`, dependency hoặc Dockerfile thì rebuild:
 
@@ -65,7 +65,7 @@ docker compose --profile dev up -d frontend
 docker compose logs -f frontend
 ```
 
-Vite tại `http://127.0.0.1:5173`. App container không có npm; dùng `docker compose run --rm frontend npm run build` khi cần build assets vào thư mục `public/build` trên host. Image cũng có build stage cho assets, nhưng mount `public/` local ưu tiên nội dung host. Không dựa vào image build artifacts nếu host chưa có chúng.
+Vite tại `http://127.0.0.1:15430`. App container không có npm; dùng `docker compose run --rm frontend npm run build` khi cần build assets vào thư mục `public/build` trên host. Image cũng có build stage cho assets, nhưng mount `public/` local ưu tiên nội dung host. Không dựa vào image build artifacts nếu host chưa có chúng.
 
 Muốn xem lỗi chi tiết trong khi sửa code, dùng override tùy chọn (chỉ bật APP_DEBUG):
 
@@ -137,12 +137,12 @@ Mặc định chỉ dùng trên máy qua loopback. Nếu muốn điện thoại 
 
 ```dotenv
 APP_BIND_IP=192.168.1.20
-APP_URL=http://192.168.1.20:9000
+APP_URL=http://192.168.1.20:15400
 ```
 
-Chạy lại `docker compose up -d`; điện thoại mở URL đó. Giữ debug false. Đặt DHCP reservation để IP ổn định; chỉ cho TCP 9000 trong firewall Private/Home, giới hạn subnet nếu hỗ trợ. Không tự bind 0.0.0.0.
+Chạy lại `docker compose up -d`; điện thoại mở URL đó. Giữ debug false. Đặt DHCP reservation để IP ổn định; chỉ cho TCP 15400 trong firewall Private/Home, giới hạn subnet nếu hỗ trợ. Không tự bind 0.0.0.0.
 
-Không port-forward/NAT, DMZ, UPnP mapping, public proxy hoặc tunnel Internet cho app. Nếu Wi-Fi người thuê chung hạ tầng, tách private SSID/VLAN; guest không được vào máy quản trị. Không dùng Laravel development server cho Internet công cộng.
+Không port-forward/NAT, DMZ, UPnP mapping, public proxy hoặc tunnel Internet cho app nếu chưa được người dùng yêu cầu. Nếu Wi-Fi người thuê chung hạ tầng, tách private SSID/VLAN; guest không được vào máy quản trị. Không dùng Laravel development server cho Internet công cộng.
 
 ## 8. SQLite và kiểm tra mã
 
@@ -158,3 +158,32 @@ php vendor/bin/pint --test
 Test cấu hình SQLite `:memory:`. PHP mặc định của máy hiện không chạy được; dùng `/opt/homebrew/opt/php@8.4/bin/php` đã có nếu cần. Image app chỉ có dependencies chạy ứng dụng, không chứa test tooling. Cấu hình Compose kiểm tra không in secrets: `docker compose config --quiet`.
 
 Tài liệu chuyên sâu nằm trong [reference/](reference/nhatro-441-codex-context.md); báo cáo bootstrap cũ trong [history/](history/ai-bootstrap.md) là lịch sử, không ghi đè hướng dẫn này.
+
+
+## 9. Ngrok do người dùng chủ động bật
+
+Khi dùng ngrok HTTPS trỏ vào app loopback 15400, thêm vào `.env`:
+
+```dotenv
+TRUSTED_PROXIES=*
+```
+
+Chạy `docker compose up -d app` để truyền biến mới vào container. App chỉ tin
+`X-Forwarded-Proto` cho scheme HTTPS; không tin `X-Forwarded-For` hoặc
+`X-Forwarded-Host`. Cấu hình này dành cho ngrok chạy trên cùng máy với app
+bind `127.0.0.1`, không dùng wildcard trust khi mở app trực tiếp ra LAN/Internet.
+Mẫu env để trống mặc định; muốn tắt hỗ trợ proxy, để `TRUSTED_PROXIES=` rồi
+chạy lại Compose. Truy cập local không có forwarded header vẫn dùng HTTP.
+
+Laravel sinh CSS/JS, form và redirect theo HTTPS của request ngrok, tránh
+mixed content. Không force HTTPS toàn app và không hardcode domain tunnel;
+đổi URL ngrok không cần sửa assets. APP_URL giữ URL local cho tooling CLI;
+chỉ cần đổi nếu muốn URL sinh ngoài HTTP request dùng domain tunnel.
+
+Không mở tunnel tự động. Không tắt CSRF/auth hoặc rate limit để sửa lỗi tunnel.
+Secure cookie vẫn false để dùng được cả HTTP local; khi chuyển sang chỉ HTTPS,
+cần cấu hình cookie phù hợp. Giữ APP_DEBUG=false và không expose port Vite.
+
+## 10. Giá mặc định và nhập tiền
+
+Trong **Phòng**, chọn **Giá mặc định** cạnh **Quản lý tầng & phòng** để sửa giá phòng, điện, nước, xe, rác và Internet. Phòng mới sao chép các mức giá này ngay khi tạo; có thể sửa giá riêng tại cài đặt phòng. Đổi giá mặc định chỉ áp dụng cho các phòng thêm sau đó. Các ô nhập tiền và hóa đơn dùng dấu phẩy ngăn cách hàng nghìn, ví dụ `1,000,000`; dữ liệu vẫn lưu số nguyên VND.

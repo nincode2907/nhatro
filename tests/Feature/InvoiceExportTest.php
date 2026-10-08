@@ -243,9 +243,9 @@ class InvoiceExportTest extends TestCase
         $this->assertStringContainsString('Đơn giá', $singleXml);
         $this->assertStringContainsString('14.000', $singleXml);
         $this->assertStringContainsString('14.217', $singleXml);
-        $this->assertStringContainsString('3.200 đ', $singleXml);
-        $this->assertStringContainsString('17.000 đ', $singleXml);
-        $this->assertStringContainsString('4.217.400 đ', $singleXml);
+        $this->assertStringContainsString('3,200 đ', $singleXml);
+        $this->assertStringContainsString('17,000 đ', $singleXml);
+        $this->assertStringContainsString('4,217,400 đ', $singleXml);
         $this->assertStringContainsString(
             'Số tiền bằng chữ: Bốn triệu hai trăm mười bảy nghìn bốn trăm đồng.',
             $singleXml,

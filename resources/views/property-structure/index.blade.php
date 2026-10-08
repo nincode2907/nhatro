@@ -13,7 +13,8 @@
             <h1>Tầng & phòng</h1>
             <p class="muted property-summary">{{ $property->name }} · Không xóa dữ liệu đã có lịch sử.</p>
         </div>
-        <a class="button button-primary" href="{{ route('property-structure.floors.create') }}">Thêm tầng</a>
+        <div class="header-actions"><a class="button button-secondary" href="{{ route('default-prices.edit') }}">Giá mặc định</a>
+        <a class="button button-primary" href="{{ route('property-structure.floors.create') }}">Thêm tầng</a></div>
     </header>
 
     @if (session('status'))

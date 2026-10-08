@@ -147,13 +147,13 @@ class DocxInvoiceExporter
             );
             $table->addCell(1800)->addText(
                 $item && $row['type']->isMetered()
-                    ? number_format($item->unit_price, 0, ',', '.').' đ'
+                    ? number_format($item->unit_price, 0, '.', ',').' đ'
                     : '',
                 null,
                 ['alignment' => Jc::RIGHT],
             );
             $table->addCell(2100)->addText(
-                $item ? number_format($item->amount, 0, ',', '.').' đ' : '-',
+                $item ? number_format($item->amount, 0, '.', ',').' đ' : '-',
                 ['bold' => true],
                 ['alignment' => Jc::RIGHT],
             );
@@ -166,7 +166,7 @@ class DocxInvoiceExporter
             ->addText('TỔNG CỘNG', ['bold' => true, 'color' => 'FFFFFF', 'size' => 12]);
         $totalTable->addCell(4350, ['bgColor' => '111111', 'valign' => VerticalJc::CENTER])
             ->addText(
-                number_format($invoice->total, 0, ',', '.').' đ',
+                number_format($invoice->total, 0, '.', ',').' đ',
                 ['bold' => true, 'color' => 'FFFFFF', 'size' => 18],
                 ['alignment' => Jc::RIGHT],
             );

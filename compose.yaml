@@ -9,13 +9,14 @@ services:
     init: true
     restart: unless-stopped
     ports:
-      - "${APP_BIND_IP:-127.0.0.1}:${APP_PORT:-9000}:8000"
+      - "${APP_BIND_IP:-127.0.0.1}:${APP_PORT:-15400}:8000"
     environment:
       APP_NAME: "${PROPERTY_NAME:-Nhà trọ 441 BPL}"
       APP_ENV: local
       APP_KEY: "${DOCKER_APP_KEY:-}"
       APP_DEBUG: "false"
-      APP_URL: "${APP_URL:-http://127.0.0.1:9000}"
+      APP_URL: "${APP_URL:-http://127.0.0.1:15400}"
+      TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
       APP_LOCALE: vi
       APP_FALLBACK_LOCALE: vi
       APP_FAKER_LOCALE: vi_VN
@@ -50,6 +51,7 @@ services:
       - ./app:/var/www/html/app
       - ./bootstrap/app.php:/var/www/html/bootstrap/app.php:ro
       - ./config:/var/www/html/config
+      - ./lang:/var/www/html/lang
       - ./public:/var/www/html/public
       - ./resources:/var/www/html/resources
       - ./routes:/var/www/html/routes
@@ -59,9 +61,12 @@ services:
     image: node:22-alpine
     profiles: ["dev"]
     working_dir: /var/www/html
+    environment:
+      VITE_PORT: "${VITE_PORT:-15430}"
+      VITE_INTERNAL_PORT: "5173"
     init: true
     ports:
-      - "127.0.0.1:${VITE_PORT:-5173}:5173"
+      - "127.0.0.1:${VITE_PORT:-15430}:5173"
     command: >
       sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0"
     volumes:

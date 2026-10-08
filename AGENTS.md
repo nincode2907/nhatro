@@ -28,7 +28,8 @@ SQLite, Blade với CSS/JS trong `public/`; Vite là tooling bổ sung.
 - Không dùng `docker compose down -v`; volume giữ key, backup và storage.
   SQLite là bind mount `database/`, không nằm trong volume app-data.
 - Không đặt DB đang hoạt động vào cloud sync/ổ mạng; backup bằng
-  `app:backup-database`. Không expose app ra Internet hay tự mở bind LAN.
+  `app:backup-database`. Không tự expose app ra Internet hay mở bind LAN. Ngrok chỉ bật khi người dùng
+  yêu cầu; giữ loopback và đọc mục ngrok trong `docs/local-guide.md`.
 
 ## Lệnh từ thư mục gốc
 
@@ -39,14 +40,14 @@ PHP 8.4 đã kiểm tra: `/opt/homebrew/opt/php@8.4/bin/php`.
 - Kiểm tra: `php artisan test`; `php vendor/bin/pint --test`.
   Test dùng SQLite `:memory:` trong `phpunit.xml`; không chạy nếu config cache
   hoặc env override khiến DB trỏ vào dữ liệu thật.
-- Native: `php artisan serve --host=127.0.0.1 --port=9000`.
+- Native: `php artisan serve --host=127.0.0.1 --port=15400`.
 - Docker: đọc `docs/local-guide.md` trước khi start/rebuild; `.env` phải có
   ADMIN_PASSWORD. Compose mặc định mount code; `compose.dev.yaml` chỉ bật debug.
 - Frontend: `npm run build` cần Node/dependencies; app container không có npm.
 - Kiểm tra Compose không in secrets: `docker compose config --quiet`.
 
 Khi start server, giữ terminal tương tác hiển thị logs; chỉ in URL thực tế
-sau khi server nghe. Cổng 9000/5173 hiện chưa được Dev Hub cấp block;
+sau khi server nghe. Dev Hub cấp block 15400–15499: app 15400, Vite 15430;
 đọc registry trước mọi quyết định port/proxy, không coi `.localhost` đã hoạt động.
 
 ## Nạp kiến thức theo task

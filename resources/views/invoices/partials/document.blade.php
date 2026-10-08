@@ -61,11 +61,11 @@
                         {{ $item && $row['type']->isMetered() ? number_format($item->metadata['current'], 0, ',', '.') : '' }}
                     </td>
                     <td class="invoice-unit-price">
-                        {{ $item && $row['type']->isMetered() ? number_format($item->unit_price, 0, ',', '.').' đ' : '' }}
+                        {{ $item && $row['type']->isMetered() ? number_format($item->unit_price, 0, '.', ',').' đ' : '' }}
                     </td>
                     <td class="invoice-line-amount">
                         @if ($item)
-                            {{ number_format($item->amount, 0, ',', '.') }} đ
+                            {{ number_format($item->amount, 0, '.', ',') }} đ
                         @else
                             —
                         @endif
@@ -77,7 +77,7 @@
 
     <div class="invoice-paper-total">
         <span>Tổng cộng</span>
-        <strong>{{ number_format($invoice->total, 0, ',', '.') }} đ</strong>
+        <strong>{{ number_format($invoice->total, 0, '.', ',') }} đ</strong>
     </div>
 
     <p class="invoice-total-words">

@@ -214,10 +214,10 @@ class InvoiceBillingTest extends TestCase
             ->assertSeeText('Đơn giá')
             ->assertSeeText('14.000')
             ->assertSeeText('14.217')
-            ->assertSeeText('3.200 đ')
-            ->assertSeeText('17.000 đ')
-            ->assertSeeText('694.400 đ')
-            ->assertSeeText('4.187.400 đ')
+            ->assertSeeText('3,200 đ')
+            ->assertSeeText('17,000 đ')
+            ->assertSeeText('694,400 đ')
+            ->assertSeeText('4,187,400 đ')
             ->assertSeeText('Bốn triệu một trăm tám mươi bảy nghìn bốn trăm đồng.');
     }
 

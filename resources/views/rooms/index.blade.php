@@ -17,7 +17,8 @@
             @endif
         </div>
         @if ($property)
-            <a class="button button-primary" href="{{ route('property-structure.index') }}">Quản lý tầng & phòng</a>
+            <div class="header-actions"><a class="button button-primary" href="{{ route('property-structure.index') }}">Quản lý tầng & phòng</a>
+            <a class="button button-secondary" href="{{ route('default-prices.edit') }}">Giá mặc định</a></div>
         @endif
     </header>
 

@@ -16,7 +16,7 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Mở [http://127.0.0.1:9000](http://127.0.0.1:9000) và đăng nhập với `ADMIN_USERNAME` / `ADMIN_PASSWORD` trong `.env`.
+Mở [http://127.0.0.1:15400](http://127.0.0.1:15400) và đăng nhập với `ADMIN_USERNAME` / `ADMIN_PASSWORD` trong `.env`.
 
 Các lần sau:
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BillingPeriodController;
+use App\Http\Controllers\DefaultPricesController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceExportController;
 use App\Http\Controllers\MeterReadingController;
@@ -51,6 +52,8 @@ Route::middleware('auth')->group(function (): void {
         ->name('meter-readings.update');
     Route::post('/billing-periods/{period}/floors/{floor}/rooms/{room}/reading/skip', [MeterReadingController::class, 'skip'])
         ->name('meter-readings.skip');
+    Route::get('/default-prices', [DefaultPricesController::class, 'edit'])->name('default-prices.edit');
+    Route::put('/default-prices', [DefaultPricesController::class, 'update'])->name('default-prices.update');
     Route::get('/rooms', [RoomController::class, 'index'])->name('rooms.index');
     Route::get('/property-structure', [PropertyStructureController::class, 'index'])
         ->name('property-structure.index');
